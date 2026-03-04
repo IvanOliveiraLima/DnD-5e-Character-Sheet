@@ -1,106 +1,106 @@
-# Dungeons & Dragons 5th Edition Character Sheet
-### A New and Modern Character Sheet for 5th edition Dungeons & Dragons.
-#### About:
-The main idea behind this sheet is easy access to common character information and auto calculation & population of fields. To see a demo, [click here](https://lckynmbrsvn.github.io/DnD-5e-Character-Sheet/) 
+# Ficha de Personagem de Dungeons & Dragons 5ª Edição
+### Uma ficha de personagem nova e moderna para Dungeons & Dragons 5ª edição.
+#### Sobre:
+A principal ideia por trás desta ficha é oferecer acesso fácil às informações comuns do personagem e o cálculo/preenchimento automático dos campos. Para ver uma demonstração, [clique aqui](https://lckynmbrsvn.github.io/DnD-5e-Character-Sheet/)
 
-Currently, this is meant to be an offline character sheet for the game of Dungeons and Dragons. It has been rewritten to have a modern responsive layout in w3's lightweight css.
+Atualmente, isto foi pensado para ser uma ficha offline para o jogo Dungeons and Dragons. Ela foi reescrita para ter um layout responsivo moderno usando o CSS leve do W3.
 
-The only part that relies on connecting online is the use of FontAwesome, which is only used in the drop down menu. It utilizes jQuery to load a character from a JSON file and automatically fill out most of the sheet based on your attributes. 
+A única parte que depende de conexão online é o uso do FontAwesome, que é usado apenas no menu suspenso. Ela utiliza jQuery para carregar um personagem a partir de um arquivo JSON e preencher automaticamente a maior parte da ficha com base nos seus atributos.
 
-A default Character Sheet has been made to show how this form is meant to be used.  This includes a 'saveSheet.json', 'character.jpeg', and 'symbol.jpeg'. 
+Uma Ficha de Personagem padrão foi criada para mostrar como este formulário deve ser usado. Isso inclui um `saveSheet.json`, `character.jpeg` e `symbol.jpeg`.
 
-#### Credits:
-This project was forked from [here](https://github.com/Chee32/5e-Character-Sheet). Credit goes to Chee32 for the JQuery which remains largely unchanged.
+#### Créditos:
+Este projeto foi um fork de [aqui](https://github.com/Chee32/5e-Character-Sheet). O crédito vai para Chee32 pelo jQuery, que permanece em grande parte inalterado.
 
-## Things to know when using this sheet.
-### How to:
-#### Make your own character sheet: 
-1. Download or clone the repository.
-2. Fill out all the fields staring with Proficeincy Bonus and Attribute Scores.
-3. Save your sheet (in the menu).
+## Coisas para saber ao usar esta ficha.
+### Como fazer:
+#### Criar sua própria ficha de personagem:
+1. Baixe ou clone o repositório.
+2. Preencha todos os campos, começando por Bônus de Proficiência e Atributos.
+3. Salve sua ficha (no menu).
 
-#### Save the sheet:
-1. Click the 'hamburger' bars to open the menu.
-2. In the 'Options' drop-down menu, click 'Save'.
-3. A JSON sheet will be download.
-4. Copy the new sheet into the 'sheet' folder of the project.
-5. You can now refresh the page or click the 'Load' button in the 'Options' drop-down menu.
+#### Salvar a ficha:
+1. Clique nas barras de “hambúrguer” para abrir o menu.
+2. No menu suspenso `Options`, clique em `Save`.
+3. Uma ficha JSON será baixada.
+4. Copie a nova ficha para a pasta `sheet` do projeto.
+5. Agora você pode atualizar a página ou clicar no botão `Load` no menu suspenso `Options`.
 
-#### Change Character & Alliance images:
-1. Upload your images into the 'imgs' folder
-2. For the Character Appearance name the file 'character.jpeg'.
-3. For the Alliance Symbol, name the file 'symbol.jpeg'.
-4. Currently, if you want to change the name or file type of these images you will have to go into the 'app.css' and change the values.
+#### Alterar imagens do Personagem e da Aliança:
+1. Envie suas imagens para a pasta `imgs`.
+2. Para a aparência do personagem, nomeie o arquivo como `character.jpeg`.
+3. Para o símbolo da aliança, nomeie o arquivo como `symbol.jpeg`.
+4. Atualmente, se você quiser mudar o nome ou o tipo de arquivo dessas imagens, terá que entrar em `app.css` e alterar os valores.
 
-#### To 'Lock' the sheet:
-Locking stops the scripts from running on the sheet if you want to calculate all of your information yourself.
-To turn on the lock:
-1. Click the 'hamburger' bars to open the menu.
-2. In the 'Options' drop-down menu, click 'Lock'.
-    - Currently this has to be set every time you load up the sheet.
+#### Para “travar” a ficha:
+O travamento impede que os scripts rodem na ficha, caso você queira calcular todas as informações manualmente.
+Para ativar o travamento:
+1. Clique nas barras de “hambúrguer” para abrir o menu.
+2. No menu suspenso `Options`, clique em `Lock`.
+    - Atualmente, isso precisa ser configurado toda vez que você carregar a ficha.
 
-### Fields that don't populate.
-Some fields do not auto-populate based off of the attributes. 
-#### Some of the less obvious ones are:
-- AC: The reason for this is that your armor and class features mainly determine your AC. I felt it was better to just leave it to you to set it.
-- Initiative Bonus: Again, a lot of things can change this other than attributes.
-- Proficiency Bonus: This mainly changes with level so I felt it was easy enough to set.
-- Current Hit Dice: Again, mainly based on level and not attributes.
-- Max Health: This is mainly based off of class and level. It can also be rolled if you chose to so I didn't want this to change if someone added more hit dice.
+### Campos que não são preenchidos automaticamente.
+Alguns campos não são preenchidos automaticamente com base nos atributos.
+#### Alguns dos menos óbvios são:
+- AC (CA): O motivo é que sua armadura e os recursos de classe determinam principalmente sua CA. Achei melhor deixar isso para você definir.
+- Bônus de Iniciativa: Novamente, muitas coisas podem alterar isso além dos atributos.
+- Bônus de Proficiência: Isso muda principalmente com o nível, então considerei simples definir manualmente.
+- Dados de Vida Atuais: Novamente, isso é principalmente baseado no nível e não nos atributos.
+- Vida Máxima: Isso é principalmente baseado em classe e nível. Também pode ser rolado, se você escolher, então não quis que isso mudasse caso alguém adicionasse mais dados de vida.
 
 ---
 
-## Changes & Planned Updates.
-### Changes:
+## Alterações e atualizações planejadas.
+### Alterações:
 ##### Hotfix -v2.1.3
-- Hotfix for broken navigation
-##### Better JQuery & More -v2.1.2
-- Updated JQuery for expanding and collapsing panels
-- Added a 'Scroll To Top' button
+- Hotfix para navegação quebrada.
+##### Melhorias no jQuery e mais -v2.1.2
+- Atualização do jQuery para expandir e recolher painéis.
+- Adicionado um botão de `Scroll To Top`.
 ##### Hotfixes -v2.1.1:
-- Fixed an issue where data from the .json character sheet were not loading.
-- Input Boxes that are auto filled or adjusted are now highlighted in a different color.
-- Menu now has a 'Help' section (to explain color highlight for example).
-##### Fixes & Formatting -v2.1:
-- Fixed the 'Attack' section not displaying.
-- Formatted HTML, CSS, JS files to be easier to read and have a consistent spacing & tabbing.
-- Tweaked the layout of the 'Attributes' page.
-- Added an additional 'Mount/Pet' section to allow for easier management of multiple pets/mounts.
-- Fixed some spelling errors.
-- Tweaked design of the Inventory & Mount page.
-##### Initial Commit -v2.0:
-- HTML and CSS re-worked to use w3's responsive layout.
-- The sheet should now be usuable 95% of the time on any screen size.
-- Re-structered the layout of fields to hopefully provide easier access to most used stats & information.
-- Re-wrote 90% of the CSS to have a more modern design theory.
-- Re-made menu to be easier to use + use as navigation.
-- Broke down major elements to be on seperate 'pages' instead of everything being on one long page.
-- Updated existing Jquery to work with changes.
-- Added additional JS to add features:
-    - New Menu design.
-    - Section cards can be collapsed.
-    - Switching between 'pages' (displaying/hiding \<div>'s).
-- Added an additional 'Class/Level' section to make it easier to multi-class.
-- Basic character information remains on top of the page as a header.
-- Added a 'Notes' page for generic notes.
+- Corrigido um problema em que os dados da ficha de personagem `.json` não carregavam.
+- Caixas de entrada que são preenchidas ou ajustadas automaticamente agora são destacadas com uma cor diferente.
+- O menu agora tem uma seção `Help` (para explicar, por exemplo, o destaque por cor).
+##### Correções e formatação -v2.1:
+- Corrigida a seção `Attack` que não era exibida.
+- Arquivos HTML, CSS e JS formatados para facilitar leitura e manter espaçamento/tabulação consistentes.
+- Ajustado o layout da página `Attributes`.
+- Adicionada uma seção extra `Mount/Pet` para facilitar o gerenciamento de múltiplos pets/montarias.
+- Corrigidos alguns erros de ortografia.
+- Ajustado o design da página de Inventário e Montaria.
+##### Commit inicial -v2.0:
+- HTML e CSS retrabalhados para usar o layout responsivo do W3.
+- A ficha agora deve ser utilizável em 95% dos casos em qualquer tamanho de tela.
+- Layout dos campos reestruturado para, com sorte, facilitar o acesso aos atributos e informações mais usados.
+- 90% do CSS foi reescrito para uma proposta de design mais moderna.
+- Menu refeito para ser mais fácil de usar e servir como navegação.
+- Elementos principais foram divididos em “páginas” separadas em vez de tudo ficar em uma única página longa.
+- jQuery existente atualizado para funcionar com as mudanças.
+- JS adicional adicionado para incluir recursos:
+    - Novo design de menu.
+    - Cartões de seção podem ser recolhidos.
+    - Alternância entre “páginas” (exibindo/ocultando `<div>`s).
+- Adicionada uma seção extra `Class/Level` para facilitar multiclasse.
+- Informações básicas do personagem permanecem no topo da página como cabeçalho.
+- Adicionada uma página `Notes` para anotações gerais.
 
-### Future Updates & Goals:
-- Code clean-up: a lot of the HTML and CSS needs to be cleaned up to remove depreciated references, be more consistent, and be easier to read.
-- Fine tuning and tweaks to UI.
-- Better documentation going forward.
-- Add Help & documentation as a menu item and/or page.
-- Add additional functionality:
-    - Auto calculate more fields.
-    - Better image handling & selection.
-    - Allow user to select a save sheet to load from.
-    - Make usable online.
-    - Hover Tool-Tips for fields.
+### Atualizações futuras e objetivos:
+- Limpeza de código: grande parte do HTML e CSS precisa ser limpa para remover referências depreciadas, ganhar consistência e ficar mais legível.
+- Ajustes finos e melhorias de UI.
+- Melhor documentação daqui para frente.
+- Adicionar Ajuda e documentação como item de menu e/ou página.
+- Adicionar funcionalidades extras:
+    - Calcular automaticamente mais campos.
+    - Melhor manipulação e seleção de imagens.
+    - Permitir que o usuário selecione uma ficha salva para carregar.
+    - Tornar utilizável online.
+    - Tooltips ao passar o mouse sobre os campos.
 
 ---
 
-## Issue Reporting & Pull Requests.
+## Relato de problemas e Pull Requests.
 ### Issues:
-If you find any issues, feel free to report them and I will try to address them. Please include as much detail as possible on how to re-create the problem, thanks!
+Se você encontrar algum problema, sinta-se à vontade para reportar e tentarei corrigir. Inclua o máximo de detalhes possível sobre como reproduzir o problema, obrigado!
 
-### Pull Requests & Forks:
-Feel free to make contributions or fork this project. Please just credit the original author and myself. Thanks!
+### Pull Requests e forks:
+Sinta-se à vontade para contribuir ou fazer fork deste projeto. Só peço que dê crédito ao autor original e a mim. Obrigado!
