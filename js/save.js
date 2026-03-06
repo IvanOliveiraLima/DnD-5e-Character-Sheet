@@ -71,6 +71,7 @@ var AUTO_SAVE_DEBOUNCE_MS = 800;
 var AUTO_SAVE_TIMER = null;
 var LAST_AUTOSAVE_FEEDBACK_TS = 0;
 var AUTOSAVE_FEEDBACK_MIN_INTERVAL_MS = 4000;
+var skipUnloadSave = false;
 
 function showSheetFeedback(message) {
     var feedback = document.getElementById('sheet-feedback');
@@ -538,6 +539,10 @@ function scheduleAutoSave() {
 }
 
 function persistCurrentSheetSafely() {
+    if (skipUnloadSave) {
+        return;
+    }
+
     try {
         var sheet = buildSheetData();
         persistSheetToLocalStorage(sheet);
@@ -545,6 +550,7 @@ function persistCurrentSheetSafely() {
 }
 
 function clearSavedSheet(argument) {
+    skipUnloadSave = true;
     localStorage.removeItem(DND_SHEET_STORAGE_KEY);
     location.reload();
 }
