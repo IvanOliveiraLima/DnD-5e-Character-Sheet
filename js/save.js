@@ -537,6 +537,13 @@ function scheduleAutoSave() {
     AUTO_SAVE_TIMER = setTimeout(runAutoSave, AUTO_SAVE_DEBOUNCE_MS);
 }
 
+function persistCurrentSheetSafely() {
+    try {
+        var sheet = buildSheetData();
+        persistSheetToLocalStorage(sheet);
+    } catch (error) {}
+}
+
 function clearSavedSheet(argument) {
     localStorage.removeItem(DND_SHEET_STORAGE_KEY);
     location.reload();
@@ -604,6 +611,8 @@ function importSheetFile(event) {
 }
 
 $(document).ready(function() {
+    document.addEventListener('sheetChanged', scheduleAutoSave);
+
     // Defer listener binding until initial scripted load is done.
     setTimeout(function() {
         $(document).on('input change', 'input, select, textarea', function(event) {
@@ -620,3 +629,6 @@ $(document).ready(function() {
         });
     }, 0);
 });
+
+window.addEventListener('beforeunload', persistCurrentSheetSafely);
+window.addEventListener('pagehide', persistCurrentSheetSafely);
