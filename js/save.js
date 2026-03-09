@@ -541,7 +541,7 @@ function saveSheet(argument) {
 }
 
 function runAutoSave() {
-    var sheet = buildSheetData();
+    var sheet = normalizeSheet(buildSheetData());
 
     try {
         persistSheetToLocalStorage(sheet);
@@ -566,7 +566,7 @@ function persistCurrentSheetSafely() {
     }
 
     try {
-        var sheet = buildSheetData();
+        var sheet = normalizeSheet(buildSheetData());
         persistSheetToLocalStorage(sheet);
     } catch (error) {}
 }
