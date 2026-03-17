@@ -107,9 +107,67 @@
         <!-- Page 1 -->
         <!-- Page 1 -->
         <div id="page-1" class="page w3-container w3-content w3-margin-top" onclick="w3_close()">
+            <!-- Status & Life -->
+            <div class="w3-col w3-margin-bottom w3-card w3-round">
+                <button class="expando w3-button w3-bar-block w3-left-align w3-blue-gray">Status</button>
+                <div id="status" class="w3-animate-opacity">
+                    <div id="hit-points" class="w3-col w3-padding  m8 l4 w3-border-right">
+                        <div id="temp-health" class="w3-col w3-padding">
+                            <input type="text" name="temp-health" />
+                            <br/>
+                            <span class="label w3-padding">Temporary Health</span>
+                        </div>
+                        <div id="current-health" class="w3-col s6 m6 l6">
+                            <input type="text" name="current-health" />
+                            <br/>
+                            <span class="label">Current Health</span>
+                        </div>
+                        <div id="max-health" class="w3-col s6 m6 l6">
+                            <input type="text" name="max-health" />
+                            <br/>
+                            <span class="label">Maximum Health</span>
+                        </div>
+                    </div>
+                    <div id="hit-dice" class="w3-col w3-padding m5 l2">
+                        <span class="label">Hit Dice</span>
+                        <div>
+                            <span class="sub-label">Current</span>
+                            <input class="label" type="text" name="current-hd" />
+                            <input type="text" name="hit-dice" />
+                        </div>
+                    </div>
+                    <div id="death-saves" class="w3-col w3-padding m5 l2">
+                        <span class="label">Death Saves</span>
+                        <div id="successes">
+                            <span class="sub-label">Success</span>
+                            <div id="success-num">
+                                <input class="w3-check" type="checkbox" name="success-1" />
+                                <input class="w3-check" type="checkbox" name="success-2" />
+                                <input class="w3-check" type="checkbox" name="success-3" />
+                            </div>
+                        </div>
+                        <div id="failures" class="">
+                            <span class="sub-label">Failure</span>
+                            <div id="failure-num">
+                                <input class="w3-check" type="checkbox" name="failure-1" />
+                                <input class="w3-check" type="checkbox" name="failure-2" />
+                                <input class="w3-check" type="checkbox" name="failure-3" />
+                            </div>
+                        </div>
+                    </div>
+                    <div id="conditions" class="w3-col w3-padding m4 l2">
+                        <span class="label">Conditions</span>
+                        <textarea name="conditions" rows="5"></textarea>
+                    </div>
+                    <div id="boons" class="w3-col w3-padding m4 l2">
+                        <span class="label">Boons</span>
+                        <textarea name="boons" rows="5"></textarea>
+                    </div>
+                </div>
+            </div>
             <!-- Top Bar -->
             <div class="w3-col w3-margin-bottom">
-                <button class="expando w3-button w3-bar-block w3-left-align w3-blue-gray">Top Bar</button>
+                <button class="expando w3-button w3-bar-block w3-left-align w3-blue-gray">Attributes</button>
                 <div id="top-bar" class="w3-col w3-center w3-card w3-round w3-animate-opacity">
                     <div class="w3-col w3-padding m4 l2">
                         <div class="input-frame">
@@ -166,64 +224,6 @@
                         <div class="label-frame">
                             <span class="label">Insperation</span>
                         </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Status & Life -->
-            <div class="w3-col w3-margin-bottom w3-card w3-round">
-                <button class="expando w3-button w3-bar-block w3-left-align w3-blue-gray">Status</button>
-                <div id="status" class="w3-animate-opacity">
-                    <div id="hit-points" class="w3-col w3-padding  m8 l4 w3-border-right">
-                        <div id="temp-health" class="w3-col w3-padding">
-                            <input type="text" name="temp-health" />
-                            <br/>
-                            <span class="label w3-padding">Temporary Health</span>
-                        </div>
-                        <div id="current-health" class="w3-col s6 m6 l6">
-                            <input type="text" name="current-health" />
-                            <br/>
-                            <span class="label">Current Health</span>
-                        </div>
-                        <div id="max-health" class="w3-col s6 m6 l6">
-                            <input type="text" name="max-health" />
-                            <br/>
-                            <span class="label">Maximum Health</span>
-                        </div>
-                    </div>
-                    <div id="hit-dice" class="w3-col w3-padding m5 l2">
-                        <span class="label">Hit Dice</span>
-                        <div>
-                            <span class="sub-label">Current</span>
-                            <input class="label" type="text" name="current-hd" />
-                            <input type="text" name="hit-dice" />
-                        </div>
-                    </div>
-                    <div id="death-saves" class="w3-col w3-padding m5 l2">
-                        <span class="label">Death Saves</span>
-                        <div id="successes">
-                            <span class="sub-label">Success</span>
-                            <div id="success-num">
-                                <input class="w3-check" type="checkbox" name="success-1" />
-                                <input class="w3-check" type="checkbox" name="success-2" />
-                                <input class="w3-check" type="checkbox" name="success-3" />
-                            </div>
-                        </div>
-                        <div id="failures" class="">
-                            <span class="sub-label">Failure</span>
-                            <div id="failure-num">
-                                <input class="w3-check" type="checkbox" name="failure-1" />
-                                <input class="w3-check" type="checkbox" name="failure-2" />
-                                <input class="w3-check" type="checkbox" name="failure-3" />
-                            </div>
-                        </div>
-                    </div>
-                    <div id="conditions" class="w3-col w3-padding m4 l2">
-                        <span class="label">Conditions</span>
-                        <textarea name="conditions" rows="5"></textarea>
-                    </div>
-                    <div id="boons" class="w3-col w3-padding m4 l2">
-                        <span class="label">Boons</span>
-                        <textarea name="boons" rows="5"></textarea>
                     </div>
                 </div>
             </div>
