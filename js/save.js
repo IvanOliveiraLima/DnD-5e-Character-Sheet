@@ -1110,6 +1110,11 @@ function persistCurrentSheetSafely() {
 }
 
 function clearSavedSheet(argument) {
+    var confirmed = window.confirm('This will clear all current sheet data and uploaded images from this browser. Continue?');
+    if (!confirmed) {
+        return;
+    }
+
     skipUnloadSave = true;
     clearTimeout(AUTO_SAVE_TIMER);
     AUTO_SAVE_TIMER = null;
