@@ -65,7 +65,7 @@ var AUTOSAVE_FEEDBACK_MIN_INTERVAL_MS = 4000;
 var skipUnloadSave = false;
 var DEFAULT_CHARACTER_IMAGE_PATH = 'imgs/character.jpeg';
 var DEFAULT_SYMBOL_IMAGE_PATH = 'imgs/symbol.jpeg';
-var MAX_IMAGE_UPLOAD_BYTES = 8 * 1024 * 1024;
+var MAX_IMAGE_UPLOAD_BYTES = 2 * 1024 * 1024;
 var ACCEPTED_IMAGE_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 window.sheetImages = window.sheetImages || {
     character: '',
@@ -153,7 +153,7 @@ function handleSheetImageUpload(event, kind) {
     }
 
     if (file.size > MAX_IMAGE_UPLOAD_BYTES) {
-        showSheetFeedback('Imagem muito grande (max 8MB)');
+        showSheetFeedback('Imagem muito grande (max 2MB)');
         input.value = '';
         return;
     }
@@ -173,6 +173,12 @@ function handleSheetImageUpload(event, kind) {
     };
 
     reader.readAsDataURL(file);
+}
+
+function resetSheetImage(kind) {
+    setSheetImage(kind, '');
+    showSheetFeedback('Imagem removida');
+    document.dispatchEvent(new Event('sheetChanged'));
 }
 
 function showSheetFeedback(message) {
@@ -826,6 +832,14 @@ $(document).ready(function() {
 
     $('#symbol-image-input').on('change', function(event) {
         handleSheetImageUpload(event, 'symbol');
+    });
+
+    $('#character-image-reset').on('click', function() {
+        resetSheetImage('character');
+    });
+
+    $('#symbol-image-reset').on('click', function() {
+        resetSheetImage('symbol');
     });
 
     document.addEventListener('sheetChanged', scheduleAutoSave);

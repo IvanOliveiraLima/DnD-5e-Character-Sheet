@@ -39,7 +39,9 @@ Este projeto foi um fork de [aqui](https://github.com/Chee32/5e-Character-Sheet)
 1. Vá para a seção `Backstory` e use os botões de upload em `Character Apperance` e `Symbol`.
 2. A pré-visualização é atualizada imediatamente no navegador.
 3. As imagens enviadas ficam salvas no `localStorage` junto com a ficha e entram no `Export JSON` / `Import JSON`.
-4. Se nenhuma imagem personalizada estiver salva, a ficha continua usando os fallbacks padrão em `imgs/character.jpeg` e `imgs/symbol.jpeg`.
+4. Use `Remove Image` para voltar ao fallback padrão da imagem.
+5. Apenas `jpg`, `jpeg`, `png` e `webp` são aceitos (limite de 2MB por imagem).
+6. Se nenhuma imagem personalizada estiver salva, a ficha continua usando os fallbacks padrão em `imgs/character.jpeg` e `imgs/symbol.jpeg`.
 
 #### Para “travar” a ficha:
 O travamento impede que os scripts rodem na ficha, caso você queira calcular todas as informações manualmente.
