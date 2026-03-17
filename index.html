@@ -1450,6 +1450,11 @@
                     <div id="apperance" class="w3-col w3-padding m6 l6">
                         <span class="label">Character Apperance</span>
                         <div id="char-img" class="w3-card w3-round"></div>
+                        <div class="image-upload-controls">
+                            <label class="w3-button w3-blue-gray w3-round" for="character-image-input">Upload Image</label>
+                            <button id="character-image-reset" class="w3-button w3-light-grey w3-round" type="button">Remove Image</button>
+                            <input id="character-image-input" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" />
+                        </div>
                     </div>
                     <div id="allies-organizations" class="w3-col w3-padding w3-center w3-round w3-border m6 l6">
                         <div id="name" class="w3-col w3-padding l6">
@@ -1459,6 +1464,11 @@
                         <div id="symbol" class="w3-col w3-padding l6">
                             <span class="label">Symbol</span>
                             <div id="alli-img" class="w3-round"></div>
+                            <div class="image-upload-controls">
+                                <label class="w3-button w3-blue-gray w3-round" for="symbol-image-input">Upload Image</label>
+                                <button id="symbol-image-reset" class="w3-button w3-light-grey w3-round" type="button">Remove Image</button>
+                                <input id="symbol-image-input" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" />
+                            </div>
                         </div>
                         <div class="w3-col">
                             <span class="label">Allies and Organizations</span>
@@ -1482,6 +1492,26 @@
                     <div id="notes-2" class="w3-col w3-padding m6 l6">
                         <textarea name="notes-2" rows="15"></textarea>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div id="image-adjust-modal" class="image-adjust-modal" style="display:none;">
+            <div class="image-adjust-dialog w3-card">
+                <div class="image-adjust-header">
+                    <span class="label">Adjust Image Framing</span>
+                </div>
+                <div class="image-adjust-body">
+                    <div id="image-adjust-viewport" class="image-adjust-viewport">
+                        <img id="image-adjust-preview" alt="Image adjustment preview" />
+                    </div>
+                    <div class="image-adjust-controls">
+                        <label for="image-adjust-zoom">Zoom</label>
+                        <input id="image-adjust-zoom" type="range" min="1" max="3" step="0.01" value="1" />
+                    </div>
+                </div>
+                <div class="image-adjust-actions">
+                    <button id="image-adjust-cancel" class="w3-button w3-light-grey w3-round" type="button">Cancel</button>
+                    <button id="image-adjust-apply" class="w3-button w3-blue-gray w3-round" type="button">Apply</button>
                 </div>
             </div>
         </div>

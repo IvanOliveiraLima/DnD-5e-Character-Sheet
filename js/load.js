@@ -277,6 +277,9 @@ function applyLoadedSheet() {
 
     //Load Backstory
     $('#page-4 #backstory textarea[name="backstory"]').val(loadJson.page4.backstory);
+    if (typeof applyImagesFromSheet === 'function') {
+        applyImagesFromSheet(loadJson);
+    }
 
     //Load allies/organizations
     $('#page-4 #allies-organizations input[name="name"]').val(loadJson.page4.allies_organizations.name);
