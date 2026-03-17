@@ -67,6 +67,10 @@ var DEFAULT_CHARACTER_IMAGE_PATH = 'imgs/character.jpeg';
 var DEFAULT_SYMBOL_IMAGE_PATH = 'imgs/symbol.jpeg';
 var MAX_IMAGE_UPLOAD_BYTES = 2 * 1024 * 1024;
 var ACCEPTED_IMAGE_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+var IMAGE_MAX_WIDTH_BY_KIND = {
+    character: 600,
+    symbol: 300
+};
 window.sheetImages = window.sheetImages || {
     character: '',
     symbol: ''
@@ -138,6 +142,70 @@ function isAcceptedImageFile(file) {
     return /\.(jpe?g|png|webp)$/.test(fileName);
 }
 
+function getImageOutputMimeType(file) {
+    var mimeType = String(file.type || '').toLowerCase();
+    if (ACCEPTED_IMAGE_MIME_TYPES.indexOf(mimeType) !== -1) {
+        return mimeType;
+    }
+
+    var fileName = String(file.name || '').toLowerCase();
+    if (/\.png$/.test(fileName)) {
+        return 'image/png';
+    }
+    if (/\.webp$/.test(fileName)) {
+        return 'image/webp';
+    }
+
+    return 'image/jpeg';
+}
+
+function resizeImageDataUrl(dataUrl, maxWidth, mimeType, onSuccess, onError) {
+    var image = new Image();
+
+    image.onload = function() {
+        var width = image.naturalWidth || image.width;
+        var height = image.naturalHeight || image.height;
+
+        if (!width || !height) {
+            onError();
+            return;
+        }
+
+        if (width <= maxWidth) {
+            onSuccess(dataUrl);
+            return;
+        }
+
+        var scale = maxWidth / width;
+        var canvas = document.createElement('canvas');
+        canvas.width = Math.round(width * scale);
+        canvas.height = Math.round(height * scale);
+
+        var context = canvas.getContext('2d');
+        if (!context) {
+            onError();
+            return;
+        }
+
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+        var resizedDataUrl;
+        if (mimeType === 'image/jpeg' || mimeType === 'image/webp') {
+            resizedDataUrl = canvas.toDataURL(mimeType, 0.9);
+        } else {
+            resizedDataUrl = canvas.toDataURL(mimeType);
+        }
+
+        onSuccess(resizedDataUrl);
+    };
+
+    image.onerror = function() {
+        onError();
+    };
+
+    image.src = dataUrl;
+}
+
 function handleSheetImageUpload(event, kind) {
     var input = event.target;
     var file = input.files && input.files[0];
@@ -159,12 +227,19 @@ function handleSheetImageUpload(event, kind) {
     }
 
     var reader = new FileReader();
+    var maxWidth = IMAGE_MAX_WIDTH_BY_KIND[kind] || 600;
+    var outputMimeType = getImageOutputMimeType(file);
 
     reader.onload = function(loadEvent) {
-        setSheetImage(kind, loadEvent.target.result);
-        showSheetFeedback('Imagem atualizada');
-        document.dispatchEvent(new Event('sheetChanged'));
-        input.value = '';
+        resizeImageDataUrl(loadEvent.target.result, maxWidth, outputMimeType, function(resizedDataUrl) {
+            setSheetImage(kind, resizedDataUrl);
+            showSheetFeedback('Imagem atualizada');
+            document.dispatchEvent(new Event('sheetChanged'));
+            input.value = '';
+        }, function() {
+            showSheetFeedback('Falha ao processar imagem');
+            input.value = '';
+        });
     };
 
     reader.onerror = function() {
