@@ -63,6 +63,117 @@ var AUTO_SAVE_TIMER = null;
 var LAST_AUTOSAVE_FEEDBACK_TS = 0;
 var AUTOSAVE_FEEDBACK_MIN_INTERVAL_MS = 4000;
 var skipUnloadSave = false;
+var DEFAULT_CHARACTER_IMAGE_PATH = 'imgs/character.jpeg';
+var DEFAULT_SYMBOL_IMAGE_PATH = 'imgs/symbol.jpeg';
+var MAX_IMAGE_UPLOAD_BYTES = 8 * 1024 * 1024;
+var ACCEPTED_IMAGE_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+window.sheetImages = window.sheetImages || {
+    character: '',
+    symbol: ''
+};
+
+function ensureSheetImagesState() {
+    if (!isObject(window.sheetImages)) {
+        window.sheetImages = {
+            character: '',
+            symbol: ''
+        };
+    }
+
+    if (typeof window.sheetImages.character !== 'string') {
+        window.sheetImages.character = '';
+    }
+
+    if (typeof window.sheetImages.symbol !== 'string') {
+        window.sheetImages.symbol = '';
+    }
+
+    return window.sheetImages;
+}
+
+function updateSheetImagePreviews(images) {
+    var safeImages = images || ensureSheetImagesState();
+    var characterSource = safeImages.character || DEFAULT_CHARACTER_IMAGE_PATH;
+    var symbolSource = safeImages.symbol || DEFAULT_SYMBOL_IMAGE_PATH;
+
+    $('#page-4 #apperance #char-img').css('background-image', 'url("' + characterSource + '")');
+    $('#page-4 #allies-organizations #alli-img').css('background-image', 'url("' + symbolSource + '")');
+}
+
+function applyImagesFromSheet(sheet) {
+    var images = ensureSheetImagesState();
+    images.character = '';
+    images.symbol = '';
+
+    if (sheet && isObject(sheet.images)) {
+        if (typeof sheet.images.character === 'string') {
+            images.character = sheet.images.character;
+        }
+
+        if (typeof sheet.images.symbol === 'string') {
+            images.symbol = sheet.images.symbol;
+        }
+    }
+
+    updateSheetImagePreviews(images);
+}
+
+function setSheetImage(kind, dataUrl) {
+    var images = ensureSheetImagesState();
+    images[kind] = dataUrl || '';
+    updateSheetImagePreviews(images);
+}
+
+function isAcceptedImageFile(file) {
+    if (!file) {
+        return false;
+    }
+
+    var mimeType = String(file.type || '').toLowerCase();
+    if (ACCEPTED_IMAGE_MIME_TYPES.indexOf(mimeType) !== -1) {
+        return true;
+    }
+
+    var fileName = String(file.name || '').toLowerCase();
+    return /\.(jpe?g|png|webp)$/.test(fileName);
+}
+
+function handleSheetImageUpload(event, kind) {
+    var input = event.target;
+    var file = input.files && input.files[0];
+
+    if (!file) {
+        return;
+    }
+
+    if (!isAcceptedImageFile(file)) {
+        showSheetFeedback('Formato de imagem inválido');
+        input.value = '';
+        return;
+    }
+
+    if (file.size > MAX_IMAGE_UPLOAD_BYTES) {
+        showSheetFeedback('Imagem muito grande (max 8MB)');
+        input.value = '';
+        return;
+    }
+
+    var reader = new FileReader();
+
+    reader.onload = function(loadEvent) {
+        setSheetImage(kind, loadEvent.target.result);
+        showSheetFeedback('Imagem atualizada');
+        document.dispatchEvent(new Event('sheetChanged'));
+        input.value = '';
+    };
+
+    reader.onerror = function() {
+        showSheetFeedback('Falha ao carregar imagem');
+        input.value = '';
+    };
+
+    reader.readAsDataURL(file);
+}
 
 function showSheetFeedback(message) {
     var feedback = document.getElementById('sheet-feedback');
@@ -171,6 +282,18 @@ function normalizeSheet(sheet) {
             basicInfo.level = currentLevel;
         }
 
+        if (!isObject(sheet.images)) {
+            sheet.images = {};
+        }
+
+        if (typeof sheet.images.character !== 'string') {
+            sheet.images.character = '';
+        }
+
+        if (typeof sheet.images.symbol !== 'string') {
+            sheet.images.symbol = '';
+        }
+
         return sheet;
     }
 
@@ -253,6 +376,7 @@ function isValidSheetSchema(sheet) {
 }
 
 function buildSheetData() {
+    var sheetImages = ensureSheetImagesState();
 
     var sheet = {
         schemaVersion: CURRENT_SHEET_SCHEMA_VERSION,
@@ -548,6 +672,10 @@ function buildSheetData() {
         page5: {
             notes_1: $('#page-5 #notes-1 textarea[name="notes-1"]').val(),
             notes_2: $('#page-5 #notes-2 textarea[name="notes-2"]').val()
+        },
+        images: {
+            character: sheetImages.character,
+            symbol: sheetImages.symbol
         }
     };
 
@@ -690,6 +818,16 @@ function importSheetFile(event) {
 }
 
 $(document).ready(function() {
+    updateSheetImagePreviews(ensureSheetImagesState());
+
+    $('#character-image-input').on('change', function(event) {
+        handleSheetImageUpload(event, 'character');
+    });
+
+    $('#symbol-image-input').on('change', function(event) {
+        handleSheetImageUpload(event, 'symbol');
+    });
+
     document.addEventListener('sheetChanged', scheduleAutoSave);
 
     // Defer listener binding until initial scripted load is done.

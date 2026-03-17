@@ -473,6 +473,15 @@ td {
     background-position: center center;
 }
 
+.image-upload-controls {
+    margin-top: 8px;
+    text-align: center;
+}
+
+.image-upload-controls input[type="file"] {
+    display: none;
+}
+
 
 /* w3 custom css */
 

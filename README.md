@@ -7,7 +7,7 @@ Atualmente, isto foi pensado para ser uma ficha offline para o jogo Dungeons and
 
 A única parte que depende de conexão online é o uso do FontAwesome, que é usado apenas no menu suspenso. Ela utiliza jQuery para carregar um personagem e preencher automaticamente a maior parte da ficha com base nos seus atributos.
 
-Uma Ficha de Personagem padrão foi criada para mostrar como este formulário deve ser usado. Isso inclui um `saveSheet.json`, `character.jpeg` e `symbol.jpeg`.
+Uma Ficha de Personagem padrão foi criada para mostrar como este formulário deve ser usado. Isso inclui um `saveSheet.json`.
 
 #### Créditos:
 Este projeto foi um fork de [aqui](https://github.com/Chee32/5e-Character-Sheet). O crédito vai para Chee32 pelo jQuery, que permanece em grande parte inalterado.
@@ -36,10 +36,10 @@ Este projeto foi um fork de [aqui](https://github.com/Chee32/5e-Character-Sheet)
 6. Fichas salvas/exportadas agora incluem `schemaVersion` para compatibilidade com futuras migrações de estrutura.
 
 #### Alterar imagens do Personagem e da Aliança:
-1. Envie suas imagens para a pasta `imgs`.
-2. Para a aparência do personagem, nomeie o arquivo como `character.jpeg`.
-3. Para o símbolo da aliança, nomeie o arquivo como `symbol.jpeg`.
-4. Atualmente, se você quiser mudar o nome ou o tipo de arquivo dessas imagens, terá que entrar em `app.css` e alterar os valores.
+1. Vá para a seção `Backstory` e use os botões de upload em `Character Apperance` e `Symbol`.
+2. A pré-visualização é atualizada imediatamente no navegador.
+3. As imagens enviadas ficam salvas no `localStorage` junto com a ficha e entram no `Export JSON` / `Import JSON`.
+4. Se nenhuma imagem personalizada estiver salva, a ficha continua usando os fallbacks padrão em `imgs/character.jpeg` e `imgs/symbol.jpeg`.
 
 #### Para “travar” a ficha:
 O travamento impede que os scripts rodem na ficha, caso você queira calcular todas as informações manualmente.
