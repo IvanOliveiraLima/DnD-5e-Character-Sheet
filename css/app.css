@@ -122,18 +122,26 @@ textarea {
     gap: 8px;
 }
 
-.class-row {
+#class-rows {
     display: flex;
-    align-items: flex-end;
+    flex-direction: column;
     gap: 8px;
 }
 
+.class-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 90px 40px;
+    column-gap: 8px;
+    align-items: end;
+    width: 100%;
+}
+
 .class-row .class-name-wrap {
-    flex: 1 1 auto;
+    min-width: 0;
 }
 
 .class-row .class-level-wrap {
-    width: 90px;
+    min-width: 0;
 }
 
 .class-row .class-level-wrap input {
@@ -142,22 +150,40 @@ textarea {
 
 .remove-class-row {
     height: 34px;
-    min-width: 36px;
-    padding: 0 8px;
+    width: 40px;
+    min-width: 40px;
+    padding: 0;
+    line-height: 1;
+}
+
+.remove-class-row.disabled,
+.remove-class-row:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .class-list-actions {
     display: flex;
     justify-content: flex-start;
+    margin-top: 2px;
 }
 
 .class-total-row {
-    width: 140px;
+    width: 160px;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid #ddd;
 }
 
 .class-total-row input {
     text-align: center;
     background-color: #f5f5f5;
+}
+
+@media (max-width: 600px) {
+    .class-row {
+        grid-template-columns: minmax(0, 1fr) 78px 36px;
+    }
 }
 
 #basic-info {

@@ -199,6 +199,15 @@ function updateClassTotalLevel() {
     $('#character-basic-info #basic-info #total-level').val(total ? String(total) : '');
 }
 
+function refreshClassRowActions() {
+    var rows = $(CLASS_ROWS_SELECTOR).children('.class-row');
+    var disableRemove = rows.length <= 1;
+
+    rows.find('.remove-class-row')
+        .prop('disabled', disableRemove)
+        .toggleClass('disabled', disableRemove);
+}
+
 function createClassRow(name, level) {
     var row = $('<div class="class-row"></div>');
     var className = $('<div class="class-name-wrap"><input type="text" name="class-name" list="dnd-class-suggestions"><span class="label">Class</span></div>');
@@ -216,6 +225,7 @@ function addClassRow(name, level, shouldDispatchEvent) {
     var row = createClassRow(name, level);
     $(CLASS_ROWS_SELECTOR).append(row);
     updateClassTotalLevel();
+    refreshClassRowActions();
 
     if (shouldDispatchEvent) {
         document.dispatchEvent(new Event('sheetChanged'));
@@ -225,13 +235,18 @@ function addClassRow(name, level, shouldDispatchEvent) {
 function removeClassRow(button) {
     var rows = $(CLASS_ROWS_SELECTOR).children('.class-row');
     if (rows.length <= 1) {
-        rows.find(CLASS_ROW_NAME_SELECTOR).val('');
-        rows.find(CLASS_ROW_LEVEL_SELECTOR).val('');
+        return;
+    }
+
+    var confirmed = window.confirm('This will remove this class entry. Continue?');
+    if (!confirmed) {
+        return;
     } else {
         $(button).closest('.class-row').remove();
     }
 
     updateClassTotalLevel();
+    refreshClassRowActions();
     document.dispatchEvent(new Event('sheetChanged'));
 }
 
@@ -257,6 +272,7 @@ function renderClassRows(classes) {
     }
 
     updateClassTotalLevel();
+    refreshClassRowActions();
 }
 
 function getClassesFromForm() {
