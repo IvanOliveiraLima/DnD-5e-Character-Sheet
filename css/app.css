@@ -116,6 +116,102 @@ textarea {
     border-bottom: 1px solid gray;
 }
 
+#class-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    max-width: 620px;
+}
+
+#class-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+.class-list-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 72px 46px;
+    column-gap: 8px;
+    width: 100%;
+    padding: 0 0 2px 0;
+}
+
+.class-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 72px 46px;
+    column-gap: 8px;
+    align-items: center;
+    width: 100%;
+}
+
+.class-row .class-name-wrap {
+    min-width: 0;
+}
+
+.class-row .class-level-wrap {
+    min-width: 0;
+}
+
+.class-row .class-level-wrap input {
+    width: 100%;
+    max-width: 72px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.class-row .class-remove-wrap {
+    width: 46px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.remove-class-row {
+    height: 34px;
+    width: 36px;
+    min-width: 36px;
+    padding: 0;
+    line-height: 1;
+}
+
+.remove-class-row.disabled,
+.remove-class-row:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.class-list-actions {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 2px;
+    width: 100%;
+}
+
+.class-total-row {
+    width: 160px;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid #ddd;
+}
+
+.class-total-row input {
+    text-align: center;
+    background-color: #f5f5f5;
+}
+
+@media (max-width: 600px) {
+    .class-list-head {
+        grid-template-columns: minmax(0, 1fr) 68px 42px;
+    }
+
+    .class-row {
+        grid-template-columns: minmax(0, 1fr) 68px 42px;
+    }
+}
+
 #basic-info {
     margin-bottom: 16px;
 }
