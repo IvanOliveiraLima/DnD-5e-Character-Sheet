@@ -210,8 +210,8 @@ function refreshClassRowActions() {
 
 function createClassRow(name, level) {
     var row = $('<div class="class-row"></div>');
-    var className = $('<div class="class-name-wrap"><input type="text" name="class-name" list="dnd-class-suggestions"><span class="label">Class</span></div>');
-    var classLevel = $('<div class="class-level-wrap"><input type="number" min="0" step="1" name="class-level"><span class="label">Level</span></div>');
+    var className = $('<div class="class-name-wrap"><input type="text" name="class-name" list="dnd-class-suggestions" placeholder="Class"></div>');
+    var classLevel = $('<div class="class-level-wrap"><input type="number" min="0" step="1" name="class-level" placeholder="Lv"></div>');
     var removeButton = $('<button type="button" class="remove-class-row w3-button w3-blue-gray w3-round" aria-label="Remove class row">-</button>');
 
     className.find('input').val(String(name || '').trim());

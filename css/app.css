@@ -120,19 +120,30 @@ textarea {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    width: 100%;
+    max-width: 620px;
 }
 
 #class-rows {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    width: 100%;
+}
+
+.class-list-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 88px 40px;
+    column-gap: 8px;
+    width: 100%;
+    padding: 0 0 2px 0;
 }
 
 .class-row {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 90px 40px;
+    grid-template-columns: minmax(0, 1fr) 88px 40px;
     column-gap: 8px;
-    align-items: end;
+    align-items: center;
     width: 100%;
 }
 
@@ -166,6 +177,7 @@ textarea {
     display: flex;
     justify-content: flex-start;
     margin-top: 2px;
+    width: 100%;
 }
 
 .class-total-row {
@@ -181,6 +193,10 @@ textarea {
 }
 
 @media (max-width: 600px) {
+    .class-list-head {
+        grid-template-columns: minmax(0, 1fr) 78px 36px;
+    }
+
     .class-row {
         grid-template-columns: minmax(0, 1fr) 78px 36px;
     }
