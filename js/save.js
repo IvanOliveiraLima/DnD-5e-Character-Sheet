@@ -1,13 +1,13 @@
 function getAttacks() {
     var attacks = [];
-    $('#page-1 #attacks-spells #attacks tr').each(function(argument) {
-        if ($(this).find('th').length == 0) {
-            var temp = {}
-            temp.name = $(this).find('input[name="name"]').val();
-            temp.stat = $(this).find('input[name="stat"]').val();
-            temp.toHit = $(this).find('input[name="toHit"]').val();
-            temp.damage = $(this).find('input[name="damage"]').val();
-            temp.damage_type = $(this).find('input[name="damage_type"]').val();
+    document.querySelectorAll('#page-1 #attacks-spells #attacks tr').forEach(function(row) {
+        if (row.querySelectorAll('th').length == 0) {
+            var temp = {};
+            temp.name = row.querySelector('input[name="name"]').value;
+            temp.stat = row.querySelector('input[name="stat"]').value;
+            temp.toHit = row.querySelector('input[name="toHit"]').value;
+            temp.damage = row.querySelector('input[name="damage"]').value;
+            temp.damage_type = row.querySelector('input[name="damage_type"]').value;
             attacks.push(temp);
         }
     });
@@ -15,25 +15,25 @@ function getAttacks() {
     return attacks;
 }
 
-function getEquipment(argument) {
+function getEquipment() {
     var equ = {
         col_1: [],
         col_2: []
-    }
-    $('#page-2 #equipment .col-1 tr:not(#total)').each(function(argument) {
-        if ($(this).find('th').length == 0) {
+    };
+    document.querySelectorAll('#page-2 #equipment .col-1 tr:not(#total)').forEach(function(row) {
+        if (row.querySelectorAll('th').length == 0) {
             var temp = {};
-            temp.name = $(this).find('input[name="name"]').val();
-            temp.weight = $(this).find('input[name="weight"]').val();
+            temp.name = row.querySelector('input[name="name"]').value;
+            temp.weight = row.querySelector('input[name="weight"]').value;
             equ.col_1.push(temp);
         }
     });
 
-    $('#page-2 #equipment .col-2 tr:not(#total)').each(function(argument) {
-        if ($(this).find('th').length == 0) {
+    document.querySelectorAll('#page-2 #equipment .col-2 tr:not(#total)').forEach(function(row) {
+        if (row.querySelectorAll('th').length == 0) {
             var temp = {};
-            temp.name = $(this).find('input[name="name"]').val();
-            temp.weight = $(this).find('input[name="weight"]').val();
+            temp.name = row.querySelector('input[name="name"]').value;
+            temp.weight = row.querySelector('input[name="weight"]').value;
             equ.col_2.push(temp);
         }
     });
@@ -43,15 +43,15 @@ function getEquipment(argument) {
 
 function getSpells(spellLevel) {
     var spells = [];
-    $('#page-3 #spells #' + spellLevel + ' .spells .spell').each(function(argument) {
+    document.querySelectorAll('#page-3 #spells #' + spellLevel + ' .spells .spell').forEach(function(el) {
         var temp = {};
         if (spellLevel != 'cantrips')
-            temp.preped = $(this).find('input[name="preped"]').prop('checked');
-        temp.spell_name = $(this).find('input[name="spell-name"]').val();
+            temp.preped = el.querySelector('input[name="preped"]').checked;
+        temp.spell_name = el.querySelector('input[name="spell-name"]').value;
         spells.push(temp);
     });
 
-    return spells
+    return spells;
 }
 
 var DND_SHEET_STORAGE_KEY = window.DND_SHEET_STORAGE_KEY || 'dnd_sheet_v1';
