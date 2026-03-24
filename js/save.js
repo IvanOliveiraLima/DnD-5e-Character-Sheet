@@ -309,12 +309,12 @@ function renderClassRows(classes) {
 function getClassesFromForm() {
     var classes = [];
 
-    $(CLASS_ROWS_SELECTOR).find('.class-row').each(function() {
-        var name = $(this).find(CLASS_ROW_NAME_SELECTOR).val();
-        var level = $(this).find(CLASS_ROW_LEVEL_SELECTOR).val();
+    document.querySelectorAll(CLASS_ROWS_SELECTOR + ' .class-row').forEach(function(row) {
+        var nameEl = row.querySelector(CLASS_ROW_NAME_SELECTOR);
+        var levelEl = row.querySelector(CLASS_ROW_LEVEL_SELECTOR);
         var entry = sanitizeClassEntry({
-            name: name,
-            level: level
+            name: nameEl ? nameEl.value : '',
+            level: levelEl ? levelEl.value : ''
         });
 
         if (entry.name || entry.level) {
@@ -355,31 +355,31 @@ function updateSheetImagePreviews(images) {
     var safeImages = images || ensureSheetImagesState();
     var characterSource = safeImages.character || '';
     var symbolSource = safeImages.symbol || '';
-    var characterElement = $('#page-4 #apperance #char-img');
-    var symbolElement = $('#page-4 #allies-organizations #alli-img');
+    var characterElement = document.querySelector('#page-4 #apperance #char-img');
+    var symbolElement = document.querySelector('#page-4 #allies-organizations #alli-img');
 
-    if (characterSource) {
-        characterElement
-            .removeClass('image-empty')
-            .text('')
-            .css('background-image', 'url("' + characterSource + '")');
-    } else {
-        characterElement
-            .addClass('image-empty')
-            .text('No character image')
-            .css('background-image', 'none');
+    if (characterElement) {
+        if (characterSource) {
+            characterElement.classList.remove('image-empty');
+            characterElement.textContent = '';
+            characterElement.style.backgroundImage = 'url("' + characterSource + '")';
+        } else {
+            characterElement.classList.add('image-empty');
+            characterElement.textContent = 'No character image';
+            characterElement.style.backgroundImage = 'none';
+        }
     }
 
-    if (symbolSource) {
-        symbolElement
-            .removeClass('image-empty')
-            .text('')
-            .css('background-image', 'url("' + symbolSource + '")');
-    } else {
-        symbolElement
-            .addClass('image-empty')
-            .text('No symbol uploaded')
-            .css('background-image', 'none');
+    if (symbolElement) {
+        if (symbolSource) {
+            symbolElement.classList.remove('image-empty');
+            symbolElement.textContent = '';
+            symbolElement.style.backgroundImage = 'url("' + symbolSource + '")';
+        } else {
+            symbolElement.classList.add('image-empty');
+            symbolElement.textContent = 'No symbol uploaded';
+            symbolElement.style.backgroundImage = 'none';
+        }
     }
 }
 
@@ -495,9 +495,9 @@ function getImageAdjustTargetDimensions(kind) {
     };
 
     var selector = kind === 'symbol' ? '#page-4 #allies-organizations #alli-img' : '#page-4 #apperance #char-img';
-    var element = $(selector);
-    var width = Math.round(element.outerWidth() || fallback.width);
-    var height = Math.round(element.outerHeight() || fallback.height);
+    var element = document.querySelector(selector);
+    var width = Math.round((element && element.offsetWidth) || fallback.width);
+    var height = Math.round((element && element.offsetHeight) || fallback.height);
 
     if (width <= 0) {
         width = fallback.width;
