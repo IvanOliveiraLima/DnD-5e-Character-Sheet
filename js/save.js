@@ -1198,13 +1198,13 @@ function persistSheetToLocalStorage(sheet) {
     saveCharacter(sheet);
 }
 
-export function saveSheet(argument) {
+export function saveSheet() {
     var sheet = normalizeSheet(buildSheetData());
 
     try {
         persistSheetToLocalStorage(sheet);
         showSheetFeedback('Salvo no navegador');
-    } catch (error) {
+    } catch (_error) {
         showSheetFeedback('Falha ao salvar');
     }
 }
@@ -1219,7 +1219,7 @@ function runAutoSave() {
             showSheetFeedback('Salvo automaticamente');
             LAST_AUTOSAVE_FEEDBACK_TS = now;
         }
-    } catch (error) {
+    } catch (_error) {
         showSheetFeedback('Falha no auto-save');
     }
 }
@@ -1237,10 +1237,10 @@ function persistCurrentSheetSafely() {
     try {
         var sheet = normalizeSheet(buildSheetData());
         persistSheetToLocalStorage(sheet);
-    } catch (error) {}
+    } catch (_error) { /* intentional: best-effort save on unload */ }
 }
 
-export function clearSavedSheet(argument) {
+export function clearSavedSheet() {
     var confirmed = window.confirm('This will clear all current sheet data and uploaded images from this browser. Continue?');
     if (!confirmed) {
         return;
@@ -1254,7 +1254,7 @@ export function clearSavedSheet(argument) {
     location.reload();
 }
 
-export function exportSheet(argument) {
+export function exportSheet() {
     var sheet = normalizeSheet(buildSheetData());
     var saveString = JSON.stringify(sheet, null, 2);
     var file = new Blob([saveString], { type: 'application/json' });
@@ -1271,7 +1271,7 @@ export function exportSheet(argument) {
     showSheetFeedback('JSON exportado');
 }
 
-export function openImportDialog(argument) {
+export function openImportDialog() {
     var input = document.getElementById('import-sheet-input');
     if (input) {
         input.click();
@@ -1301,7 +1301,7 @@ export function importSheetFile(event) {
             AUTO_SAVE_TIMER = null;
             skipUnloadSave = true;
             location.reload();
-        } catch (error) {
+        } catch (_error) {
             showSheetFeedback('JSON invalido');
         } finally {
             input.value = '';
