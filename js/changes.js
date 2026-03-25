@@ -1,118 +1,12 @@
+import { BACKGROUND_FIXED_SKILLS_MAP, BACKGROUND_FLEXIBLE_SET, SKILL_NAME_TO_KEY } from './modules/utils.js';
+import { getAbilityModifier, cacluateCurrencyMod } from './modules/calculations.js';
+import { showSheetFeedback } from './save.js';
+
 var LOCKED = false;
 var BACKGROUND_AUTO_APPLIED_SKILL_KEYS = [];
-var BACKGROUND_FIXED_SKILLS_MAP = {
-    "Acolyte (Background)": ["Insight", "Religion"],
-    "Anthropologist": ["Insight", "Religion"],
-    "Archaeologist": ["History", "Survival"],
-    "Athlete": ["Acrobatics", "Athletics"],
-    "Azorius Functionary": ["Insight", "Intimidation"],
-    "Black Fist Double Agent": ["Deception", "Insight"],
-    "Boros Legionnaire": ["Athletics", "Intimidation"],
-    "Caravan Specialist": ["Animal Handling", "Survival"],
-    "Celebrity Adventurer's Scion": ["Perception", "Performance"],
-    "Charlatan": ["Deception", "Sleight of Hand"],
-    "City Watch": ["Athletics", "Insight"],
-    "Clan Crafter": ["History", "Insight"],
-    "Cormanthor Refugee": ["Nature", "Survival"],
-    "Courtier": ["Insight", "Persuasion"],
-    "Criminal": ["Deception", "Stealth"],
-    "Dimir Operative": ["Deception", "Stealth"],
-    "Dragon Casualty": ["Intimidation", "Survival"],
-    "Earthspur Miner": ["Athletics", "Survival"],
-    "Entertainer": ["Acrobatics", "Performance"],
-    "Faceless": ["Deception", "Intimidation"],
-    "Failed Merchant": ["Investigation", "Persuasion"],
-    "Far Traveler": ["Insight", "Perception"],
-    "Feylost": ["Deception", "Survival"],
-    "Fisher": ["History", "Survival"],
-    "Folk Hero": ["Animal Handling", "Survival"],
-    "Gambler": ["Deception", "Insight"],
-    "Gate Urchin": ["Deception", "Sleight of Hand"],
-    "Gate Warden": ["Persuasion", "Survival"],
-    "Giant Foundling": ["Intimidation", "Survival"],
-    "Golgari Agent": ["Nature", "Survival"],
-    "Grinner": ["Deception", "Performance"],
-    "Gruul Anarch": ["Animal Handling", "Athletics"],
-    "Guild Artisan": ["Insight", "Persuasion"],
-    "Harborfolk": ["Athletics", "Sleight of Hand"],
-    "Hermit": ["Medicine", "Religion"],
-    "Hillsfar Merchant": ["Insight", "Persuasion"],
-    "Hillsfar Smuggler": ["Perception", "Stealth"],
-    "House Agent": ["Investigation", "Persuasion"],
-    "Initiate": ["Athletics", "Intimidation"],
-    "Inquisitor": ["Investigation", "Religion"],
-    "Iron Route Bandit": ["Animal Handling", "Stealth"],
-    "Izzet Engineer": ["Arcana", "Investigation"],
-    "Knight of Solamnia": ["Athletics", "Survival"],
-    "Lorehold Student": ["History", "Religion"],
-    "Mage of High Sorcery": ["Arcana", "History"],
-    "Marine": ["Athletics", "Survival"],
-    "Mercenary Veteran": ["Athletics", "Persuasion"],
-    "Mulmaster Aristocrat": ["Deception", "Performance"],
-    "Noble": ["History", "Persuasion"],
-    "Orzhov Representative": ["Intimidation", "Religion"],
-    "Outlander": ["Athletics", "Survival"],
-    "Phlan Insurgent": ["Stealth", "Survival"],
-    "Phlan Refugee": ["Athletics", "Insight"],
-    "Plaintiff": ["Medicine", "Persuasion"],
-    "Planar Philosopher": ["Arcana", "Persuasion"],
-    "Prismari Student": ["Acrobatics", "Performance"],
-    "Quandrix Student": ["Arcana", "Nature"],
-    "Rakdos Cultist": ["Acrobatics", "Performance"],
-    "Rival Intern": ["History", "Investigation"],
-    "Rune Carver": ["History", "Perception"],
-    "Sage": ["Arcana", "History"],
-    "Sailor": ["Athletics", "Perception"],
-    "Secret Identity": ["Deception", "Stealth"],
-    "Selesnya Initiate": ["Nature", "Persuasion"],
-    "Shade Fanatic": ["Deception", "Intimidation"],
-    "Shipwright": ["History", "Perception"],
-    "Silverquill Student": ["Intimidation", "Persuasion"],
-    "Simic Scientist": ["Arcana", "Medicine"],
-    "Smuggler": ["Athletics", "Deception"],
-    "Soldier": ["Athletics", "Intimidation"],
-    "Stojanow Prisoner": ["Deception", "Perception"],
-    "Ticklebelly Nomad": ["Animal Handling", "Nature"],
-    "Trade Sheriff": ["Investigation", "Persuasion"],
-    "Urchin": ["Sleight of Hand", "Stealth"],
-    "Uthgardt Tribe Member": ["Athletics", "Survival"],
-    "Vizier": ["History", "Religion"],
-    "Volstrucker Agent": ["Deception", "Stealth"],
-    "Waterdhavian Noble": ["History", "Persuasion"],
-    "Witchlight Hand": ["Performance", "Sleight of Hand"],
-    "Witherbloom Student": ["Nature", "Survival"]
-};
-var BACKGROUND_FLEXIBLE_SET = {
-    "Cloistered Scholar": true,
-    "Faction Agent": true,
-    "Haunted One": true,
-    "Inheritor": true,
-    "Investigator": true,
-    "Knight of the Order": true,
-    "Urban Bounty Hunter": true
-};
-var SKILL_NAME_TO_KEY = {
-    "Acrobatics": "acrobatics",
-    "Animal Handling": "animal-handling",
-    "Arcana": "arcana",
-    "Athletics": "athletics",
-    "Deception": "deception",
-    "History": "history",
-    "Insight": "insight",
-    "Intimidation": "intimidation",
-    "Investigation": "investigation",
-    "Medicine": "medicine",
-    "Nature": "nature",
-    "Perception": "perception",
-    "Performance": "performance",
-    "Persuasion": "persuasion",
-    "Religion": "religion",
-    "Sleight of Hand": "sleight-hand",
-    "Stealth": "stealth",
-    "Survival": "survival"
-};
 
-function lock() {
+
+export function lock() {
     LOCKED = !LOCKED;
     var lockEl = document.querySelector('#menu-options #lock');
     if (lockEl) {
@@ -159,9 +53,7 @@ function applyBackgroundSkillProficiencies(backgroundValue) {
     }
 
     if (BACKGROUND_FLEXIBLE_SET[normalizedBackground]) {
-        if (typeof showSheetFeedback === 'function') {
-            showSheetFeedback('Background flexível: selecione as perícias manualmente');
-        }
+        showSheetFeedback('Background flexível: selecione as perícias manualmente');
         refreshAllSkillDerivedValues();
         return;
     }
@@ -201,73 +93,7 @@ function applyBackgroundSkillProficiencies(backgroundValue) {
 
 
 function updateMod(att, score) {
-    var value = '';
-    switch (parseInt(score)) {
-        case 1:
-            value = '-5';
-            break;
-        case 2:
-        case 3:
-            value = '-4';
-            break;
-        case 4:
-        case 5:
-            value = '-3';
-            break;
-        case 6:
-        case 7:
-            value = '-2';
-            break;
-        case 8:
-        case 9:
-            value = '-1';
-            break;
-        case 10:
-        case 11:
-            value = '+0';
-            break;
-        case 12:
-        case 13:
-            value = '+1';
-            break;
-        case 14:
-        case 15:
-            value = '+2';
-            break;
-        case 16:
-        case 17:
-            value = '+3';
-            break;
-        case 18:
-        case 19:
-            value = '+4';
-            break;
-        case 20:
-        case 21:
-            value = '+5';
-            break;
-        case 22:
-        case 23:
-            value = '+6';
-            break;
-        case 24:
-        case 25:
-            value = '+7';
-            break;
-        case 26:
-        case 27:
-            value = '+8';
-            break;
-        case 28:
-        case 29:
-            value = '+9';
-            break;
-        case 30:
-            value = '+10';
-            break;
-    }
-
-    document.querySelector('#attributes input[name="' + att + '-mod"]').value = value;
+    document.querySelector('#attributes input[name="' + att + '-mod"]').value = getAbilityModifier(score);
 }
 
 function updateSaves() {
@@ -636,82 +462,7 @@ function calculateTotalCurrency() {
     document.querySelector('#equipment #currancy input[name="total"]').value = total.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
 }
 
-function cacluateCurrencyMod(coin, base) {
-    switch (coin) {
-        case 'copper':
-            switch (base) {
-                case 'c':
-                    return 1;
-                case 's':
-                    return 1 / 10;
-                case 'g':
-                    return 1 / 100;
-                case 'e':
-                    return 1 / 50;
-                case 'p':
-                    return 1 / 1000;
-            }
-            break;
-        case 'silver':
-            switch (base) {
-                case 'c':
-                    return 10;
-                case 's':
-                    return 1;
-                case 'g':
-                    return 1 / 10;
-                case 'e':
-                    return 1 / 5;
-                case 'p':
-                    return 1 / 100;
-            }
-            break;
-        case 'gold':
-            switch (base) {
-                case 'c':
-                    return 100;
-                case 's':
-                    return 10;
-                case 'g':
-                    return 1;
-                case 'e':
-                    return 2;
-                case 'p':
-                    return 1 / 10;
-            }
-            break;
-        case 'electrum':
-            switch (base) {
-                case 'c':
-                    return 50;
-                case 's':
-                    return 5;
-                case 'g':
-                    return 1 / 2;
-                case 'e':
-                    return 1;
-                case 'p':
-                    return 1 / 20;
-            }
-            break;
-        case 'platinum':
-            switch (base) {
-                case 'c':
-                    return 1000;
-                case 's':
-                    return 100;
-                case 'g':
-                    return 10;
-                case 'e':
-                    return 20;
-                case 'p':
-                    return 1;
-            }
-            break;
-    }
-}
-
-function updateSpellSlots(total) {
+export function updateSpellSlots(total) {
     var totalSlots = parseInt(total.value) || 0;
     var number = total.getAttribute('name').substring(-1);
     var slotsContainer = total.parentElement.parentElement.querySelector('div#slots');
