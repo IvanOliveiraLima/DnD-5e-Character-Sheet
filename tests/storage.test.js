@@ -83,6 +83,18 @@ describe('loadCharacter', () => {
         const loaded = await loadCharacter();
         expect(loaded.schemaVersion).toBe(2);
     });
+
+    it('does not downgrade schemaVersion when already at 2', async () => {
+        mockStore.set('active', { id: 'active', schemaVersion: 2, hp: 10 });
+        const loaded = await loadCharacter();
+        expect(loaded.schemaVersion).toBe(2);
+    });
+
+    it('preserves existing id when migrating', async () => {
+        mockStore.set('active', { id: 'active', schemaVersion: 1, hp: 5 });
+        const loaded = await loadCharacter();
+        expect(loaded.id).toBe('active');
+    });
 });
 
 // ---------------------------------------------------------------------------
