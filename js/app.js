@@ -1,4 +1,4 @@
-function openPage(pageName) {
+export function openPage(pageName) {
     var i;
     var x = document.getElementsByClassName("page");
     for (i = 0; i < x.length; i++) {
@@ -7,23 +7,29 @@ function openPage(pageName) {
     document.getElementById(pageName).style.display = "";
 }
 
-function w3_open() {
+export function w3_open() {
     document.getElementById("mySidebar").style.display = "block";
 }
 
-function w3_close() {
+export function w3_close() {
     document.getElementById("mySidebar").style.display = "none";
 }
 
-$(document).ready(function() {
-    $(".expando").click(function() {
-        $(this).next().slideToggle();
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.expando').forEach(function(el) {
+        el.addEventListener('click', function() {
+            var next = this.nextElementSibling;
+            if (next) {
+                next.style.display = next.style.display === 'none' ? '' : 'none';
+            }
+        });
     });
-});
 
-$(document).ready(function() {
-    $("#scroll-to-top").click(function() {
-        $("html, body").animate({ scrollTop: 0 }, 1000);
-        return false;
-    });
+    var scrollTop = document.getElementById('scroll-to-top');
+    if (scrollTop) {
+        scrollTop.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return false;
+        });
+    }
 });
