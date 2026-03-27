@@ -617,10 +617,27 @@ td {
 
 #equipment table {
     width: 100%;
+    table-layout: fixed;
+}
+
+#equipment input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
 }
 
 #equipment input[name="name"] {
     width: 100%;
+}
+
+@media (max-width: 600px) {
+    #currancy-encumberance {
+        width: 100% !important;
+    }
+
+    .col-1 {
+        width: 100% !important;
+        overflow-x: auto;
+    }
 }
 
 #spell-info {
