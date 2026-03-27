@@ -337,10 +337,19 @@ textarea {
     font-size: 1.2em;
 }
 
+#status {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px;
+}
+
 #status>div {
     min-height: 191px;
     border-right: 1px solid #ccc!important;
     border-top: 1px solid #ccc!important;
+    flex: 1 1 140px;
+    min-width: 0;
 }
 
 #saves-skills>div {
@@ -353,13 +362,16 @@ textarea {
 #death-saves {
     align-items: center;
     text-align: center;
-    min-width: 140px;
 }
 
-#conditions,
-#boons,
-#hit-dice {
-    min-width: 160px;
+#hit-points {
+    flex: 1 1 240px !important;
+}
+
+@media (max-width: 600px) {
+    #hit-points { flex: 1 1 100% !important; }
+    #hit-dice, #death-saves { flex: 1 1 45% !important; }
+    #conditions, #boons { flex: 1 1 45% !important; }
 }
 
 #hit-dice>div {
@@ -388,7 +400,7 @@ textarea {
 }
 
 #hit-points {
-    min-width: 296px;
+    flex: 1 1 240px;
 }
 
 #hit-points>div {
