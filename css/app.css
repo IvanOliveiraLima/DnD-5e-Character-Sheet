@@ -261,6 +261,32 @@ textarea {
         width: 100%;
         text-align: center;
     }
+
+    .class-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-rows: auto auto;
+        gap: 4px;
+    }
+
+    .class-row input[name="class-name"] {
+        grid-column: 1;
+        grid-row: 1;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .class-row input[name="class-level"] {
+        grid-column: 1;
+        grid-row: 2;
+        width: 80px;
+    }
+
+    .class-row button {
+        grid-column: 2;
+        grid-row: 1 / 3;
+        align-self: center;
+    }
 }
 
 #basic-info {
