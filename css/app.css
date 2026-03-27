@@ -299,6 +299,27 @@ textarea {
     margin: auto;
 }
 
+/* Expande o container principal */
+.w3-content.page-width,
+.w3-content {
+    max-width: 1200px !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+}
+
+@media (max-width: 600px) {
+    .w3-content,
+    .w3-content.page-width {
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+    }
+
+    .w3-container {
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+    }
+}
+
 #top-bar .label {
     font-size: 1.1em;
 }
