@@ -226,6 +226,24 @@ textarea {
     .class-row {
         grid-template-columns: minmax(0, 1fr) 68px 42px;
     }
+
+    #basic-info .w3-col {
+        width: 100% !important;
+    }
+
+    #class-list-container {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .class-list-actions .w3-button {
+        width: 100%;
+    }
+
+    .class-total-row {
+        width: 100%;
+        text-align: center;
+    }
 }
 
 #basic-info {
