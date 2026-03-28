@@ -85,10 +85,9 @@ window.goToCharacterSelect = function() {
 // ---------------------------------------------------------------------------
 
 await migrateFromLocalStorage();
+await migrateActiveCharacter();
 
-var migratedId = await migrateActiveCharacter();
-
-var activeId = sessionStorage.getItem('activeCharacterId') || migratedId || null;
+var activeId = sessionStorage.getItem('activeCharacterId') || null;
 
 if (!activeId) {
     showCharacterSelect();
