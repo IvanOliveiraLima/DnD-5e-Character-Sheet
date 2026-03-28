@@ -1,5 +1,5 @@
 import { listCharacters, deleteCharacter, duplicateCharacter, exportAllCharacters, importCharacters, generateId, saveCharacter } from './storage.js';
-import { createEmptySheet } from '../save.js';
+import { createEmptySheet, blockUnloadSave } from '../save.js';
 
 var container = null;
 var selectInitialized = false;
@@ -65,11 +65,13 @@ async function createNewCharacter() {
     var id = generateId();
     var emptySheet = createEmptySheet();
     await saveCharacter({ ...emptySheet, id: id, schemaVersion: 2, updatedAt: Date.now() });
+    blockUnloadSave();
     sessionStorage.setItem('activeCharacterId', id);
     location.reload();
 }
 
 function openCharacter(id) {
+    blockUnloadSave();
     sessionStorage.setItem('activeCharacterId', id);
     location.reload();
 }
