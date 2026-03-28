@@ -11,7 +11,7 @@ import { applyLoadedSheet } from './load.js';
 
 import { openPage, w3_open, w3_close } from './app.js';
 import { att_attack } from './add-attack.js';
-import { exportSheet, openImportDialog, clearSavedSheet, importSheetFile, saveSheet } from './save.js';
+import { exportSheet, openImportDialog, clearSavedSheet, importSheetFile, saveSheet, cancelAutoSave } from './save.js';
 import { lock } from './changes.js';
 import { loadCharacter, saveCharacter, generateId } from './modules/storage.js';
 import { initCharacterSelect } from './modules/character-select.js';
@@ -75,6 +75,7 @@ function showCharacterSelect() {
 
 // Called by the sidebar "← My Characters" link
 window.goToCharacterSelect = function() {
+    cancelAutoSave();
     sessionStorage.removeItem('activeCharacterId');
     w3_close();
     showCharacterSelect();

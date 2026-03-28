@@ -1232,6 +1232,18 @@ function scheduleAutoSave() {
     AUTO_SAVE_TIMER = setTimeout(runAutoSave, AUTO_SAVE_DEBOUNCE_MS);
 }
 
+export function cancelAutoSave() {
+    clearTimeout(AUTO_SAVE_TIMER);
+    AUTO_SAVE_TIMER = null;
+    skipUnloadSave = true;
+}
+
+export function blockUnloadSave() {
+    skipUnloadSave = true;
+    clearTimeout(AUTO_SAVE_TIMER);
+    AUTO_SAVE_TIMER = null;
+}
+
 function persistCurrentSheetSafely() {
     if (skipUnloadSave) {
         return;
