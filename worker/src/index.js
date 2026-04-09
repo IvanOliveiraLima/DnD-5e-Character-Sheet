@@ -40,6 +40,27 @@ Rules:
 - Write backstory in 2-3 sentences
 - All number values must be strings`
 
+const RATE_LIMIT_REQUESTS = 10
+const RATE_LIMIT_WINDOW_MS = 60 * 1000 // 1 minuto
+
+async function checkRateLimit(request) {
+  const ip = request.headers.get('CF-Connecting-IP') || 'unknown'
+  const key = `rate-limit:${ip}`
+  const cache = caches.default
+  const cacheKey = new Request(`https://rate-limit.internal/${key}`)
+
+  const cached = await cache.match(cacheKey)
+  const count = cached ? parseInt(await cached.text()) : 0
+
+  if (count >= RATE_LIMIT_REQUESTS) return false
+
+  const newCount = new Response(String(count + 1), {
+    headers: { 'Cache-Control': `max-age=${RATE_LIMIT_WINDOW_MS / 1000}` }
+  })
+  await cache.put(cacheKey, newCount)
+  return true
+}
+
 const ALLOWED_ORIGINS = [
   'https://ivanoliveiralima.github.io',
   'http://localhost:5173',
@@ -92,6 +113,14 @@ export default {
     if (description.length > 1000) {
       return new Response(JSON.stringify({ error: 'Description too long (max 1000 chars)' }), {
         status: 400,
+        headers: getCorsHeaders(request)
+      })
+    }
+
+    const allowed = await checkRateLimit(request)
+    if (!allowed) {
+      return new Response(JSON.stringify({ error: 'Too many requests. Please wait a minute.' }), {
+        status: 429,
         headers: getCorsHeaders(request)
       })
     }
