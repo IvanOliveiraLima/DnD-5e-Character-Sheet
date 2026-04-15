@@ -94,6 +94,8 @@ window.goToCharacterSelect = function() {
 await migrateFromLocalStorage();
 await migrateActiveCharacter();
 await initAuth();
+var authItem = document.getElementById('auth-sidebar-item');
+if (authItem) authItem.style.visibility = 'visible';
 
 var activeId = sessionStorage.getItem('activeCharacterId') || null;
 
