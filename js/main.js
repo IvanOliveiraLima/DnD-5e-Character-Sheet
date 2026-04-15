@@ -142,6 +142,9 @@ window.handleForgotPassword = handleForgotPassword;
 
 // Reagir a mudanças de autenticação
 onAuthChange(async (user) => {
+    const authItem = document.getElementById('auth-sidebar-item');
+    if (authItem) authItem.style.visibility = 'visible';
+
     const sidebarLink = document.getElementById('auth-sidebar-link');
     const userInfo = document.getElementById('auth-user-info');
     const emailSpan = document.getElementById('auth-user-email');
