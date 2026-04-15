@@ -139,6 +139,8 @@ export function initCharacterSelect(screenElement) {
     container.querySelector('#import-all-input').addEventListener('change', handleImportFile);
 
     // Wire card actions via delegation
+    document.addEventListener('syncCompleted', () => { refresh() })
+
     container.querySelector('.character-grid').addEventListener('click', function(e) {
         var card = e.target.closest('.character-card');
         if (!card) return;

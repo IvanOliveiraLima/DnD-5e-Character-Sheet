@@ -137,6 +137,7 @@ export async function syncAll() {
     }
 
     setSyncStatus('synced')
+    document.dispatchEvent(new CustomEvent('syncCompleted'))
     console.info('Sync completed')
   } catch (err) {
     setSyncStatus('error')
