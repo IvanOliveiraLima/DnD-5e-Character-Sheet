@@ -160,11 +160,29 @@ export function stopAutoSync() {
   }
 }
 
-// Push imediato de um personagem (chamado após autosave)
+// Push imediato de um personagem (usado internamente pelo sync completo)
 export async function syncCharacterNow(characterId) {
   if (!isSupabaseEnabled() || !isLoggedIn()) return
   const character = await loadCharacter(characterId)
   if (character) await pushCharacter(character)
+}
+
+// Push com debounce — evita requisições excessivas durante edição contínua
+let syncDebounceTimer = null
+const SYNC_DEBOUNCE_MS = 15000 // 15 segundos
+
+export function scheduleSyncCharacter(characterId) {
+  clearTimeout(syncDebounceTimer)
+  syncDebounceTimer = setTimeout(async () => {
+    if (!isSupabaseEnabled() || !isLoggedIn()) return
+    const character = await loadCharacter(characterId)
+    if (character) await pushCharacter(character)
+  }, SYNC_DEBOUNCE_MS)
+}
+
+export function cancelScheduledSync() {
+  clearTimeout(syncDebounceTimer)
+  syncDebounceTimer = null
 }
 
 export function setSyncStatus(status) {

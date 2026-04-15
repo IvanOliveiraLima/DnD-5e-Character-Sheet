@@ -17,7 +17,7 @@ import { loadCharacter, saveCharacter, generateId } from './modules/storage.js';
 import { initCharacterSelect } from './modules/character-select.js';
 import { openAiModal, closeAiModal, runAiGenerate } from './modules/ai-modal.js'
 import { initAuth, onAuthChange } from './modules/auth.js'
-import { startAutoSync, stopAutoSync } from './modules/sync.js'
+import { startAutoSync, stopAutoSync, cancelScheduledSync } from './modules/sync.js'
 import { openAuthModal, closeAuthModal, showSignIn, showSignUp,
   handleEmailSignIn, handleEmailSignUp, handleGoogleSignIn,
   handleSignOut, handleForgotPassword } from './modules/auth-modal.js';
@@ -153,5 +153,6 @@ onAuthChange(async (user) => {
         if (sidebarLink) sidebarLink.style.display = 'block';
         if (userInfo) userInfo.style.display = 'none';
         stopAutoSync();
+        cancelScheduledSync();
     }
 });
