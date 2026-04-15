@@ -88,12 +88,40 @@ window.goToCharacterSelect = function() {
 };
 
 // ---------------------------------------------------------------------------
+// Auth state handler — registrado ANTES de initAuth() para capturar a
+// notificação inicial da sessão restaurada
+// ---------------------------------------------------------------------------
+
+onAuthChange(async (user) => {
+    const authItem = document.getElementById('auth-sidebar-item');
+    if (authItem) authItem.style.visibility = 'visible';
+
+    const sidebarLink = document.getElementById('auth-sidebar-link');
+    const userInfo = document.getElementById('auth-user-info');
+    const emailSpan = document.getElementById('auth-user-email');
+
+    if (user) {
+        if (sidebarLink) sidebarLink.style.display = 'none';
+        if (userInfo) userInfo.style.display = 'block';
+        if (emailSpan) emailSpan.textContent = user.email;
+        startAutoSync(30000);
+    } else {
+        if (sidebarLink) sidebarLink.style.display = 'block';
+        if (userInfo) userInfo.style.display = 'none';
+        stopAutoSync();
+        cancelScheduledSync();
+    }
+});
+
+// ---------------------------------------------------------------------------
 // Boot sequence
 // ---------------------------------------------------------------------------
 
 await migrateFromLocalStorage();
 await migrateActiveCharacter();
 await initAuth();
+
+// Garante visibilidade mesmo quando Supabase não está configurado (modo offline)
 var authItem = document.getElementById('auth-sidebar-item');
 if (authItem) authItem.style.visibility = 'visible';
 
@@ -139,25 +167,3 @@ window.handleEmailSignUp = handleEmailSignUp;
 window.handleGoogleSignIn = handleGoogleSignIn;
 window.handleSignOut = handleSignOut;
 window.handleForgotPassword = handleForgotPassword;
-
-// Reagir a mudanças de autenticação
-onAuthChange(async (user) => {
-    const authItem = document.getElementById('auth-sidebar-item');
-    if (authItem) authItem.style.visibility = 'visible';
-
-    const sidebarLink = document.getElementById('auth-sidebar-link');
-    const userInfo = document.getElementById('auth-user-info');
-    const emailSpan = document.getElementById('auth-user-email');
-
-    if (user) {
-        if (sidebarLink) sidebarLink.style.display = 'none';
-        if (userInfo) userInfo.style.display = 'block';
-        if (emailSpan) emailSpan.textContent = user.email;
-        startAutoSync(30000);
-    } else {
-        if (sidebarLink) sidebarLink.style.display = 'block';
-        if (userInfo) userInfo.style.display = 'none';
-        stopAutoSync();
-        cancelScheduledSync();
-    }
-});
