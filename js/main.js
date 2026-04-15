@@ -15,7 +15,12 @@ import { exportSheet, openImportDialog, clearSavedSheet, importSheetFile, saveSh
 import { lock } from './changes.js';
 import { loadCharacter, saveCharacter, generateId } from './modules/storage.js';
 import { initCharacterSelect } from './modules/character-select.js';
-import { openAiModal, closeAiModal, runAiGenerate } from './modules/ai-modal.js';
+import { openAiModal, closeAiModal, runAiGenerate } from './modules/ai-modal.js'
+import { initAuth, onAuthChange } from './modules/auth.js'
+import { startAutoSync, stopAutoSync } from './modules/sync.js'
+import { openAuthModal, closeAuthModal, showSignIn, showSignUp,
+  handleEmailSignIn, handleEmailSignUp, handleGoogleSignIn,
+  handleSignOut, handleForgotPassword } from './modules/auth-modal.js';
 
 // ---------------------------------------------------------------------------
 // Migration helpers
@@ -88,6 +93,7 @@ window.goToCharacterSelect = function() {
 
 await migrateFromLocalStorage();
 await migrateActiveCharacter();
+await initAuth();
 
 var activeId = sessionStorage.getItem('activeCharacterId') || null;
 
@@ -122,3 +128,30 @@ window.lock = lock;
 window.openAiModal = openAiModal;
 window.closeAiModal = closeAiModal;
 window.runAiGenerate = runAiGenerate;
+window.openAuthModal = openAuthModal;
+window.closeAuthModal = closeAuthModal;
+window.showSignIn = showSignIn;
+window.showSignUp = showSignUp;
+window.handleEmailSignIn = handleEmailSignIn;
+window.handleEmailSignUp = handleEmailSignUp;
+window.handleGoogleSignIn = handleGoogleSignIn;
+window.handleSignOut = handleSignOut;
+window.handleForgotPassword = handleForgotPassword;
+
+// Reagir a mudanças de autenticação
+onAuthChange(async (user) => {
+    const sidebarLink = document.getElementById('auth-sidebar-link');
+    const userInfo = document.getElementById('auth-user-info');
+    const emailSpan = document.getElementById('auth-user-email');
+
+    if (user) {
+        if (sidebarLink) sidebarLink.style.display = 'none';
+        if (userInfo) userInfo.style.display = 'block';
+        if (emailSpan) emailSpan.textContent = user.email;
+        startAutoSync(30000);
+    } else {
+        if (sidebarLink) sidebarLink.style.display = 'block';
+        if (userInfo) userInfo.style.display = 'none';
+        stopAutoSync();
+    }
+});
