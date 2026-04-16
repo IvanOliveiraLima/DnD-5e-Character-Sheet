@@ -1,7 +1,7 @@
 import { listCharacters, deleteCharacter, duplicateCharacter, exportAllCharacters, importCharacters, generateId, saveCharacter, markAsDeleted } from './storage.js';
 import { isLoggedIn } from './auth.js';
 import { createEmptySheet, blockUnloadSave } from '../save.js';
-
+import { applyTranslations } from './i18n.js';
 var container = null;
 var selectInitialized = false;
 
@@ -47,7 +47,7 @@ async function refresh() {
     var chars = await listCharacters();
 
     if (chars.length === 0) {
-        grid.insertAdjacentHTML('beforeend', '<p class="select-empty">No characters yet. Create one to get started!</p>');
+        grid.insertAdjacentHTML('beforeend', `<p class="select-empty">No characters yet. Create one to get started!</p>`);
     } else {
         chars.forEach(function(char) {
             grid.appendChild(renderCard(char));
@@ -60,6 +60,8 @@ async function refresh() {
     btnNew.textContent = '+ New Character';
     btnNew.addEventListener('click', createNewCharacter);
     grid.appendChild(btnNew);
+
+    applyTranslations();
 }
 
 async function createNewCharacter() {

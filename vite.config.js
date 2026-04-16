@@ -10,7 +10,7 @@ export default defineConfig({
   plugins: [
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico'],
+      includeAssets: ['favicon.png', 'icons/icon.svg'],
       manifest: {
         name: 'D&D 5e Character Sheet',
         short_name: 'DnD Sheet',

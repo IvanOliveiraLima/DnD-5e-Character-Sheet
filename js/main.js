@@ -8,7 +8,6 @@ import './extra.js';
 import './add-attack.js';
 import './app.js';
 import { applyLoadedSheet } from './load.js';
-
 import { openPage, w3_open, w3_close } from './app.js';
 import { att_attack } from './add-attack.js';
 import { exportSheet, openImportDialog, clearSavedSheet, importSheetFile, saveSheet, cancelAutoSave } from './save.js';
@@ -17,6 +16,7 @@ import { loadCharacter, saveCharacter, generateId } from './modules/storage.js';
 import { initCharacterSelect } from './modules/character-select.js';
 import { openAiModal, closeAiModal, runAiGenerate } from './modules/ai-modal.js'
 import { initAuth, onAuthChange } from './modules/auth.js'
+import { applyTranslations, setLang } from './modules/i18n.js'
 import { startAutoSync, stopAutoSync, cancelScheduledSync } from './modules/sync.js'
 import { openAuthModal, closeAuthModal, showSignIn, showSignUp,
   handleEmailSignIn, handleEmailSignUp, handleGoogleSignIn,
@@ -143,10 +143,13 @@ if (!activeId) {
     }
 }
 
+applyTranslations();
+
 // ---------------------------------------------------------------------------
 // Global handlers for inline onclick attributes in HTML
 // ---------------------------------------------------------------------------
 
+window.setLang = setLang;
 window.openPage = openPage;
 window.w3_open = w3_open;
 window.w3_close = w3_close;
