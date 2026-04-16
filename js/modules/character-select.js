@@ -1,6 +1,7 @@
 import { listCharacters, deleteCharacter, duplicateCharacter, exportAllCharacters, importCharacters, generateId, saveCharacter, markAsDeleted } from './storage.js';
 import { isLoggedIn } from './auth.js';
 import { createEmptySheet, blockUnloadSave } from '../save.js';
+import { t } from './i18n.js';
 
 var container = null;
 var selectInitialized = false;
@@ -16,7 +17,7 @@ function renderCard(char) {
     card.dataset.id = char.id;
 
     var meta = [char.race, char.class, char.level ? 'Level ' + char.level : ''].filter(Boolean).join(' · ');
-    var updated = char.updatedAt ? 'Last edited ' + formatDate(char.updatedAt) : '';
+    var updated = char.updatedAt ? t('last_edited') + ' ' + formatDate(char.updatedAt) : '';
 
     card.innerHTML = `
         <p class="char-name" title="${escapeHtml(char.name)}">${escapeHtml(char.name)}</p>
@@ -25,7 +26,7 @@ function renderCard(char) {
             ${updated}
         </div>
         <div class="card-actions">
-            <button class="w3-button w3-blue-gray w3-round btn-open" style="flex:1">Open</button>
+            <button class="w3-button w3-blue-gray w3-round btn-open" style="flex:1">${t('open')}</button>
             <button class="w3-button w3-round btn-duplicate" title="Duplicate">⧉</button>
             <button class="w3-button w3-red w3-round btn-delete" title="Delete">✕</button>
         </div>
@@ -47,7 +48,7 @@ async function refresh() {
     var chars = await listCharacters();
 
     if (chars.length === 0) {
-        grid.insertAdjacentHTML('beforeend', '<p class="select-empty">No characters yet. Create one to get started!</p>');
+        grid.insertAdjacentHTML('beforeend', `<p class="select-empty">${t('no_characters')}</p>`);
     } else {
         chars.forEach(function(char) {
             grid.appendChild(renderCard(char));
@@ -57,7 +58,7 @@ async function refresh() {
     // New character button at the end of the grid
     var btnNew = document.createElement('button');
     btnNew.className = 'btn-new-character';
-    btnNew.textContent = '+ New Character';
+    btnNew.textContent = t('new_character');
     btnNew.addEventListener('click', createNewCharacter);
     grid.appendChild(btnNew);
 }
