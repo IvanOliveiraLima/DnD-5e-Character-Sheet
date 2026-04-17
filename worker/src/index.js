@@ -111,46 +111,6 @@ function validateCharacterJSON(data) {
   return true
 }
 
-async function handleTranslate(body, request, env) {
-  const { texts, targetLang } = body
-
-  if (!texts || typeof texts !== 'object') {
-    return new Response(JSON.stringify({ error: 'Invalid texts object' }), {
-      status: 400, headers: getCorsHeaders(request)
-    })
-  }
-
-  const TRANSLATE_PROMPT = `You are a translation assistant.
-Translate the following JSON values to ${targetLang === 'pt' ? 'Brazilian Portuguese' : 'English'}.
-Translate everything including D&D game terms, spell names, class names, race names and skill names.
-Return ONLY valid JSON with the same keys, translated values. No markdown, no explanation.`
-
-  const input = JSON.stringify(texts)
-
-  const response = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
-    messages: [
-      { role: 'system', content: TRANSLATE_PROMPT },
-      { role: 'user', content: input }
-    ],
-    max_tokens: 1024,
-    temperature: 0.3
-  })
-
-  const text = response.response || ''
-  const clean = text.replace(/```json\n?|\n?```/g, '').trim()
-
-  try {
-    const translated = JSON.parse(clean)
-    return new Response(JSON.stringify({ translated }), {
-      status: 200, headers: getCorsHeaders(request)
-    })
-  } catch {
-    return new Response(JSON.stringify({ error: 'Translation failed. Please try again.' }), {
-      status: 500, headers: getCorsHeaders(request)
-    })
-  }
-}
-
 export default {
   async fetch(request, env) {
     // Handle CORS preflight
@@ -173,10 +133,6 @@ export default {
         status: 400,
         headers: getCorsHeaders(request)
       })
-    }
-
-    if (body.action === 'translate') {
-      return handleTranslate(body, request, env)
     }
 
     const description = body.description?.trim()
