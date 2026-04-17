@@ -49,22 +49,39 @@ async function downloadImage(url) {
   }
 }
 
+// Deleção de imagem do Supabase Storage (tenta todas as extensões possíveis)
+async function deleteStorageImage(userId, characterId, kind) {
+  const extensions = ['jpeg', 'jpg', 'png', 'webp']
+  for (const ext of extensions) {
+    const path = `${userId}/${characterId}/${kind}.${ext}`
+    await supabase.storage.from('character-images').remove([path])
+  }
+}
+
 // Push: envia personagem local → Supabase
 export async function pushCharacter(character) {
   if (!isSupabaseEnabled() || !isLoggedIn()) return
   const user = getCurrentUser()
 
-  // Extrair imagens antes de salvar no banco
   const charCopy = { ...character }
   const images = charCopy.images || {}
 
+  // Imagem do personagem
   if (images.character?.startsWith('data:')) {
     const url = await uploadImage(user.id, character.id, 'character', images.character)
     if (url) charCopy.images = { ...images, character: url }
+  } else if (!images.character) {
+    // Imagem foi removida — deleta do Storage
+    await deleteStorageImage(user.id, character.id, 'character')
   }
+
+  // Símbolo
   if (images.symbol?.startsWith('data:')) {
     const url = await uploadImage(user.id, character.id, 'symbol', images.symbol)
     if (url) charCopy.images = { ...charCopy.images, symbol: url }
+  } else if (!images.symbol) {
+    // Símbolo foi removido — deleta do Storage
+    await deleteStorageImage(user.id, character.id, 'symbol')
   }
 
   const { error } = await supabase
@@ -117,6 +134,11 @@ export async function syncAll() {
     // Deletar do Supabase os personagens marcados como excluídos
     for (const { id } of deletedRecords) {
       if (remoteMap.has(id)) {
+        // Deleta imagens do Storage antes do registro
+        const user = getCurrentUser()
+        await deleteStorageImage(user.id, id, 'character')
+        await deleteStorageImage(user.id, id, 'symbol')
+
         const { error } = await supabase.from('characters').delete().eq('id', id)
         if (!error) await clearTombstone(id)
       } else {
