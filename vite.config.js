@@ -3,7 +3,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
   root: '.',
-  base: '/DnD-5e-Character-Sheet/',
+  base: '/TBT-RPG/',
   build: {
     outDir: 'dist'
   },
@@ -12,13 +12,14 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.png', 'icons/icon.svg'],
       manifest: {
-        name: 'D&D 5e Character Sheet',
-        short_name: 'DnD Sheet',
+        name: 'TBT-RPG',
+        short_name: 'TBT-RPG',
         description: 'Ficha de personagem para D&D 5ª Edição',
         theme_color: '#607d8b',
         background_color: '#ecf0f1',
         display: 'standalone',
-        start_url: '/DnD-5e-Character-Sheet/',
+        start_url: '/TBT-RPG/',
+        scope: '/TBT-RPG/',
         icons: [
           {
             src: 'icons/icon-192.png',
