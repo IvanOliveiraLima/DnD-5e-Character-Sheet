@@ -1,10 +1,10 @@
-# Ficha de Personagem de Dungeons & Dragons 5ª Edição
+# TBT-RPG — Ficha de Personagem de Dungeons & Dragons 5ª Edição
 
 Uma ficha de personagem moderna, offline e com persistência automática para Dungeons & Dragons 5e.
 
 ## Demo
 
-[https://ivanoliveiralima.github.io/DnD-5e-Character-Sheet/](https://ivanoliveiralima.github.io/DnD-5e-Character-Sheet/)
+[https://ivanoliveiralima.github.io/TBT-RPG/](https://ivanoliveiralima.github.io/TBT-RPG/)
 
 ## Sobre
 
@@ -311,7 +311,7 @@ Isso acontece porque dependem de regras específicas de classe, itens e builds.
 
 ## Créditos
 
-Este projeto é um fork de:
+Este projeto é um fork, significativamente expandido, de:
 
 - https://github.com/lckynmbsrn/DnD-5e-Character-Sheet
 
