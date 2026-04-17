@@ -1,12 +1,33 @@
+@import './tokens.css';
+
 /* Reset global */
 
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
+html {
+  background: var(--color-bg-base);
+  color-scheme: dark;
+}
+
 html, body {
   max-width: 100vw;
   overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+a:not([class]) {
+  color: var(--color-accent-purple);
+}
+
+a:not([class]):hover {
+  color: var(--color-accent-purple-hover);
 }
 
 input, textarea, select {
@@ -966,8 +987,11 @@ td {
 /* Modernização visual */
 
 body {
-    font-size: 15px;
-    line-height: 1.5;
+    background: var(--color-bg-base);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
 }
 
 .w3-card, .w3-card-2 {
