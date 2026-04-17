@@ -16,29 +16,32 @@ const TRANSLATABLE_FIELDS = [
 ]
 
 export async function translateSheet(targetLang) {
-  const texts = {}
-  const fieldMap = {}
-
-  for (const field of TRANSLATABLE_FIELDS) {
-    const el = document.querySelector(field.selector)
-    if (el && el.value.trim()) {
-      texts[field.key] = el.value.trim()
-      fieldMap[field.key] = el
-    }
-  }
-
-  if (Object.keys(texts).length === 0) {
-    if (window.showSheetFeedback) window.showSheetFeedback(
-      targetLang === 'pt' ? 'Nenhum campo para traduzir' : 'No fields to translate'
-    )
-    return
-  }
-
-  if (window.showSheetFeedback) window.showSheetFeedback(
-    targetLang === 'pt' ? 'Traduzindo...' : 'Translating...'
-  )
+  const btn = document.getElementById('translate-fields-btn')
+  if (btn) { btn.disabled = true; btn.textContent = '🌐 Translating...' }
 
   try {
+    const texts = {}
+    const fieldMap = {}
+
+    for (const field of TRANSLATABLE_FIELDS) {
+      const el = document.querySelector(field.selector)
+      if (el && el.value.trim()) {
+        texts[field.key] = el.value.trim()
+        fieldMap[field.key] = el
+      }
+    }
+
+    if (Object.keys(texts).length === 0) {
+      if (window.showSheetFeedback) window.showSheetFeedback(
+        targetLang === 'pt' ? 'Nenhum campo para traduzir' : 'No fields to translate'
+      )
+      return
+    }
+
+    if (window.showSheetFeedback) window.showSheetFeedback(
+      targetLang === 'pt' ? 'Traduzindo...' : 'Translating...'
+    )
+
     const translated = await translateFields(texts, targetLang)
 
     for (const [key, value] of Object.entries(translated)) {
@@ -57,5 +60,10 @@ export async function translateSheet(targetLang) {
     if (window.showSheetFeedback) window.showSheetFeedback(
       err.message || (targetLang === 'pt' ? 'Falha na tradução' : 'Translation failed')
     )
+  } finally {
+    if (btn) {
+      btn.disabled = false
+      btn.textContent = '🌐 Translate fields'
+    }
   }
 }
