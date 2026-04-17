@@ -1,5 +1,5 @@
 {
-  "name": "dnd-5e-character-sheet",
+  "name": "tbt-rpg",
   "version": "1.0.0",
   "description": "Uma ficha de personagem moderna, offline e com persistência automática para Dungeons & Dragons 5e.",
   "main": "index.js",
