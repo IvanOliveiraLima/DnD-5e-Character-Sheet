@@ -32,13 +32,19 @@ async function downloadImage(url) {
   if (!url || url.startsWith('data:')) return url
   try {
     const res = await fetch(url)
+    if (!res.ok) {
+      console.warn('downloadImage failed:', res.status, url)
+      return null
+    }
     const blob = await res.blob()
     return new Promise((resolve) => {
       const reader = new FileReader()
       reader.onloadend = () => resolve(reader.result)
+      reader.onerror = () => resolve(null)
       reader.readAsDataURL(blob)
     })
-  } catch {
+  } catch (err) {
+    console.warn('downloadImage error:', err.message)
     return null
   }
 }
@@ -128,10 +134,20 @@ export async function syncAll() {
       if (remoteTs > localTs) {
         const remoteData = remote.data
         if (remoteData.images?.character?.startsWith('http')) {
-          remoteData.images.character = await downloadImage(remoteData.images.character) || remoteData.images.character
+          const downloaded = await downloadImage(remoteData.images.character)
+          if (downloaded) {
+            remoteData.images.character = downloaded
+          } else {
+            console.warn('Could not download character image — keeping URL as fallback')
+          }
         }
         if (remoteData.images?.symbol?.startsWith('http')) {
-          remoteData.images.symbol = await downloadImage(remoteData.images.symbol) || remoteData.images.symbol
+          const downloaded = await downloadImage(remoteData.images.symbol)
+          if (downloaded) {
+            remoteData.images.symbol = downloaded
+          } else {
+            console.warn('Could not download symbol image — keeping URL as fallback')
+          }
         }
         await saveCharacter({ ...remoteData, updatedAt: remoteTs })
       }
