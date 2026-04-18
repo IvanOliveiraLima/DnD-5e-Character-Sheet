@@ -1807,7 +1807,7 @@
           <div style="display:flex; gap:8px; justify-content:flex-end; align-items:center; flex-wrap:wrap;">
             <span id="ai-generate-loading" style="display:none; font-size:0.85rem; color:#546e7a; font-style:italic;">Generating your character...</span>
             <button class="w3-button w3-round" onclick="closeAiModal()">Cancel</button>
-            <button id="ai-generate-btn" class="w3-button w3-blue-gray w3-round" onclick="runAiGenerate()">&#10024; Generate</button>
+            <button id="ai-generate-btn" class="w3-button w3-blue-gray w3-round btn-primary" onclick="runAiGenerate()">&#10024; Generate</button>
           </div>
         </div>
       </div>
@@ -1826,7 +1826,7 @@
             <input type="password" id="auth-password" placeholder="••••••••" style="width:100%; margin-bottom:10px; box-sizing:border-box;" />
             <div id="auth-error" style="color:#c62828; font-size:0.85rem; display:none; margin-bottom:8px; padding:8px; background:#ffebee; border-radius:4px;"></div>
             <div style="display:flex; flex-direction:column; gap:8px;">
-              <button class="w3-button w3-blue-gray w3-round" style="width:100%;" onclick="handleEmailSignIn()">Sign in</button>
+              <button class="w3-button w3-blue-gray w3-round btn-primary" style="width:100%;" onclick="handleEmailSignIn()">Sign in</button>
               <button class="w3-button w3-round" style="width:100%; border:1px solid #ddd; opacity:0.5; cursor:not-allowed;" disabled title="Coming soon">Continue with Google</button>
               <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-top:4px;">
                 <a href="#" onclick="showSignUp()" style="color:#546e7a;">Create account</a>
@@ -1842,7 +1842,7 @@
             <div id="auth-signup-error" style="color:#c62828; font-size:0.85rem; display:none; margin-bottom:8px; padding:8px; background:#ffebee; border-radius:4px;"></div>
             <div id="auth-signup-success" style="color:#2e7d32; font-size:0.85rem; display:none; margin-bottom:8px; padding:8px; background:#e8f5e9; border-radius:4px;"></div>
             <div style="display:flex; flex-direction:column; gap:8px;">
-              <button class="w3-button w3-blue-gray w3-round" style="width:100%;" onclick="handleEmailSignUp()">Create account</button>
+              <button class="w3-button w3-blue-gray w3-round btn-primary" style="width:100%;" onclick="handleEmailSignUp()">Create account</button>
               <a href="#" onclick="showSignIn()" style="font-size:0.8rem; color:#546e7a; text-align:center;">Already have an account? Sign in</a>
             </div>
           </div>
