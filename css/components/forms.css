@@ -431,3 +431,14 @@ button.expando.w3-button:hover {
   color: var(--color-text-primary) !important;
   background: var(--color-bg-elevated) !important;
 }
+
+/* --------------------------------------------------------------------------
+   6. .lang-btn-active — using purple accent (info color used for UI state)
+   -------------------------------------------------------------------------- */
+
+.lang-btn-active {
+  background: var(--color-accent-purple) !important;
+  border-color: var(--color-accent-purple-hover) !important;
+  color: var(--color-text-primary) !important;
+  font-weight: var(--font-weight-medium) !important;
+}
