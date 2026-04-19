@@ -182,8 +182,8 @@ export async function syncAll() {
       const localTs = local.updatedAt || 0
       const remoteTs = remote ? new Date(remote.updated_at).getTime() : 0
 
-      if (localTs >= remoteTs) {
-        await pushCharacter(local)
+      if (localTs > remoteTs) {
+        await pushCharacter(local, remote || null)
       }
     }
 
