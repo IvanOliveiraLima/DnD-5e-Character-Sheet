@@ -2,8 +2,17 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Monorepo structure
+
+This repo uses a **lightweight monorepo** with two independent projects:
+- Root (`./`) — **v1**, vanilla JS + W3.CSS, the current production version
+- `v2/` — **v2 rewrite**, React + TypeScript + Tailwind CSS, in active development
+
+v1 is live at `ivanoliveiralima.github.io/TBT-RPG/`, v2 preview at `.../TBT-RPG/v2/`.
+
 ## Commands
 
+### v1 (root)
 ```bash
 npm run dev        # Start Vite dev server at http://localhost:5173
 npm run build      # Production build → dist/
@@ -13,7 +22,16 @@ npm run test       # Run Vitest (single run)
 npm run test:watch # Run tests in watch mode
 ```
 
-CI runs `npm ci && npm run lint && npm run test && npm run build` on PRs to `main-dev` and `master`.
+### v2 (cd v2/)
+```bash
+npm run dev        # http://localhost:5173
+npm run build      # dist/
+npm run lint       # ESLint
+npm run test       # Vitest single run
+npm run test:watch
+```
+
+CI runs lint + test + build for **both** v1 and v2 on PRs to `main-dev` and `master`.
 
 To redeploy the Cloudflare Worker (manual step — not in CI):
 
@@ -83,3 +101,45 @@ DOM → readFormValues() [save.js] → debounced saveCharacter() → IndexedDB
 ### Testing
 
 Tests live in `/tests/`. The `idb` library is mocked via `vi.mock('idb')` with an in-memory `Map`. Tests cover pure calculations (`calculations.test.js`), storage CRUD + migrations (`storage.test.js`), and utility functions (`utils.test.js`).
+
+## v2 Architecture
+
+**React 19 + TypeScript 6 + Tailwind CSS 3 + Vite 8**
+
+| File | Role |
+|------|------|
+| `v2/src/types/character.ts` | TypeScript interfaces mirroring v1 IndexedDB schema exactly |
+| `v2/src/lib/db.ts` | IndexedDB wrapper: reads v1 DB read-only, writes to v2 DB |
+| `v2/src/lib/supabase.ts` | Supabase client singleton (same project as v1) |
+| `v2/src/store/auth.ts` | Zustand auth store (initAuth, signIn, signOut) |
+| `v2/src/store/characters.ts` | Zustand characters store (fetchCharacters) |
+| `v2/src/pages/CharSelect.tsx` | Character select screen — first screen, reads from IndexedDB |
+| `v2/src/pages/Login.tsx` | Login page (email + password via Supabase) |
+| `v2/src/routes.tsx` | React Router v6 config (/, /login, * → /) |
+| `v2/tests/db.test.ts` | Basic test for IndexedDB wrapper |
+
+### v2 design reference
+
+The visual source of truth is in `design-reference/tbt-rpg/project/` (in `.gitignore` — not committed). Key files:
+- `components/tokens.css` — design tokens (colours, fonts, radii)
+- `components/char-select.jsx` — CharSelect prototype (inline styles, exact values)
+- `components/primitives.jsx` — T object (token constants) and Section/Label/Field components
+- `components/data.jsx` — prototype character shape (`hp: {current, max}`, `classes: [{name, level}]`, etc.)
+
+If `design-reference/` is absent in a new session, ask the user to provide the files.
+
+### v2 IndexedDB strategy
+
+- v1 DB: `dnd-character-sheet` (version 3) — **read-only** from v2
+- v2 DB: `dnd-character-sheet-v2` (version 1) — read + write
+- `listCharacters()` merges both; v2 records win on id collision
+- `copyFromV1(id)` migrates one character to v2 DB before first edit
+- Character HP is stored as strings in v1 (`page1.status.current_health`, `max_health`, `temp_health`)
+- `CharacterSummary` adapter normalises to `{ hp: { current, max, temp } }` as numbers
+
+### v2 key patterns
+
+- **No class names on CharSelect** — uses inline styles matching the prototype exactly (the T object)
+- **Tailwind** is available for other components but CharSelect/Login use inline styles for pixel-perfect fidelity
+- **exactOptionalPropertyTypes + noUncheckedIndexedAccess** enabled — be careful with optional chaining
+- `vite-plugin-pwa` installed with `--legacy-peer-deps` (Vite 8 not yet in peer dep range of v1.2.0)

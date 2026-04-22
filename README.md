@@ -4,7 +4,28 @@ Uma ficha de personagem moderna, offline e com persistência automática para Du
 
 ## Demo
 
-[https://ivanoliveiralima.github.io/TBT-RPG/](https://ivanoliveiralima.github.io/TBT-RPG/)
+- **v1 (atual):** [https://ivanoliveiralima.github.io/TBT-RPG/](https://ivanoliveiralima.github.io/TBT-RPG/)
+- **v2 (preview):** [https://ivanoliveiralima.github.io/TBT-RPG/v2/](https://ivanoliveiralima.github.io/TBT-RPG/v2/)
+
+## Reescrita v2
+
+A v2 é uma reescrita do zero em **React + TypeScript + Tailwind CSS**, baseada em um novo visual projetado no Claude Design. A v1 (vanilla JS + W3.CSS) permanece em produção enquanto a v2 é construída em paralelo. Quando a v2 atingir paridade funcional, substituirá a v1.
+
+O projeto usa uma estrutura monorepo leve:
+- `./` — v1 (vanilla JS, Vite)
+- `v2/` — v2 (React, TypeScript, Tailwind, Vite)
+
+Ambas as versões são deployadas pelo mesmo CI para `gh-pages`:
+```
+ivanoliveiralima.github.io/TBT-RPG/      → v1
+ivanoliveiralima.github.io/TBT-RPG/v2/   → v2
+```
+
+Para desenvolver a v2:
+```bash
+cd v2 && npm install && npm run dev
+# Acesse http://localhost:5173
+```
 
 ## Sobre
 
