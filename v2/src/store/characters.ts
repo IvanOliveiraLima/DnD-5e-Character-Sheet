@@ -1,9 +1,9 @@
 import { create } from 'zustand'
-import { listCharacters } from '@/lib/db'
-import type { CharacterSummary } from '@/types/character'
+import { listCharacters } from '@/data/db'
+import type { Character } from '@/domain/character'
 
 interface CharactersState {
-  characters: CharacterSummary[]
+  characters: Character[]
   loading:    boolean
   error:      string | null
   fetchCharacters: () => Promise<void>

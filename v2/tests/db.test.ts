@@ -19,7 +19,7 @@ vi.mock('idb', () => {
   }
 })
 
-import { listCharacters } from '@/lib/db'
+import { listCharacters } from '@/data/db'
 
 describe('listCharacters', () => {
   beforeEach(() => {
