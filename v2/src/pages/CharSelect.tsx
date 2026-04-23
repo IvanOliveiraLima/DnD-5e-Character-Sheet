@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCharactersStore } from '@/store/characters'
 import { useAuthStore } from '@/store/auth'
-import type { CharacterSummary } from '@/types/character'
+import type { Character } from '@/domain/character'
 
 /* ── V1 production URL ────────────────────────────────────────────────── */
 const V1_URL = 'https://ivanoliveiralima.github.io/TBT-RPG/'
@@ -87,8 +87,9 @@ function HpBar({ current, max }: { current: number; max: number }) {
 }
 
 /* ── Character card ────────────────────────────────────────────────────── */
-function CharCard({ ch, selected }: { ch: CharacterSummary; selected: boolean }) {
+function CharCard({ ch, selected }: { ch: Character; selected: boolean }) {
   const firstClass = ch.classes[0]
+  const portrait = ch.images.character ?? null
 
   function handleClick() {
     // Phase A: clicking a character redirects to v1
@@ -117,8 +118,8 @@ function CharCard({ ch, selected }: { ch: CharacterSummary; selected: boolean })
       {/* Portrait */}
       <div style={{
         width: 56, height: 56, borderRadius: 12, flexShrink: 0,
-        background: ch.portrait
-          ? `url(${ch.portrait}) center/cover`
+        background: portrait
+          ? `url(${portrait}) center/cover`
           : `
             radial-gradient(circle at 40% 35%, #8B6FC5 0%, transparent 55%),
             radial-gradient(circle at 60% 65%, ${T.ruby} 0%, transparent 55%),
@@ -131,7 +132,7 @@ function CharCard({ ch, selected }: { ch: CharacterSummary; selected: boolean })
         boxShadow: selected ? `0 0 14px ${T.gold}30` : 'none',
         position: 'relative',
       }}>
-        {!ch.portrait && (ch.name || 'X')[0]}
+        {!portrait && (ch.name || 'X')[0]}
 
         {/* Level badge */}
         <div style={{
