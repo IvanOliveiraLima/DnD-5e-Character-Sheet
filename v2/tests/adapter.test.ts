@@ -1,0 +1,360 @@
+import { describe, it, expect } from 'vitest'
+import { adaptCharacter } from '@/data/adapter'
+import type { V1Character } from '@/data/schema-v1'
+
+import fullCharFixture    from './fixtures/full-character.json'
+import spellcasterFixture from './fixtures/spellcaster-character.json'
+
+/* ── Helpers ────────────────────────────────────────────────────────────── */
+
+const fullChar    = fullCharFixture    as V1Character
+const spellcaster = spellcasterFixture as V1Character
+
+function emptyChar(): V1Character {
+  return {}
+}
+
+/* ── Tests ──────────────────────────────────────────────────────────────── */
+
+describe('adaptCharacter — empty input', () => {
+  it('does not throw on completely empty record', () => {
+    expect(() => adaptCharacter(emptyChar())).not.toThrow()
+  })
+
+  it('returns "Unnamed" when char_name is missing', () => {
+    const result = adaptCharacter(emptyChar())
+    expect(result.name).toBe('Unnamed')
+  })
+
+  it('returns default numeric zeros for abilities', () => {
+    const result = adaptCharacter(emptyChar())
+    expect(result.abilities).toEqual({ str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0 })
+  })
+
+  it('returns totalLevel 0 for empty classes', () => {
+    const result = adaptCharacter(emptyChar())
+    expect(result.totalLevel).toBe(0)
+  })
+
+  it('returns proficiencyBonus 2 even at level 0', () => {
+    const result = adaptCharacter(emptyChar())
+    expect(result.proficiencyBonus).toBe(2)
+  })
+
+  it('returns hp { current: 0, max: 0, temp: 0 } when all are empty', () => {
+    const result = adaptCharacter(emptyChar())
+    expect(result.hp).toEqual({ current: 0, max: 0, temp: 0 })
+  })
+
+  it('returns empty attacks array', () => {
+    const result = adaptCharacter(emptyChar())
+    expect(result.attacks).toEqual([])
+  })
+
+  it('returns undefined spells when no spells or slots exist', () => {
+    const result = adaptCharacter(emptyChar())
+    expect(result.spells).toBeUndefined()
+  })
+
+  it('returns 18 savingThrows (6 abilities)', () => {
+    const result = adaptCharacter(emptyChar())
+    expect(result.savingThrows).toHaveLength(6)
+  })
+
+  it('returns 18 skills', () => {
+    const result = adaptCharacter(emptyChar())
+    expect(result.skills).toHaveLength(18)
+  })
+
+  it('returns empty inventory', () => {
+    const result = adaptCharacter(emptyChar())
+    expect(result.inventory).toEqual([])
+  })
+
+  it('returns zero currency', () => {
+    const result = adaptCharacter(emptyChar())
+    expect(result.currency).toEqual({ pp: 0, gp: 0, ep: 0, sp: 0, cp: 0 })
+  })
+
+  it('returns features as empty array', () => {
+    const result = adaptCharacter(emptyChar())
+    expect(result.features).toEqual([])
+  })
+})
+
+describe('adaptCharacter — HP edge cases', () => {
+  it('sets current to max when current_health is empty string', () => {
+    const raw: V1Character = {
+      page1: { status: { current_health: '', max_health: '42', temp_health: '' } },
+    }
+    const result = adaptCharacter(raw)
+    expect(result.hp.current).toBe(42)
+    expect(result.hp.max).toBe(42)
+  })
+
+  it('sets current to max when current_health is absent', () => {
+    const raw: V1Character = {
+      page1: { status: { max_health: '30', temp_health: '' } },
+    }
+    const result = adaptCharacter(raw)
+    expect(result.hp.current).toBe(30)
+  })
+
+  it('preserves current HP when explicitly set', () => {
+    const raw: V1Character = {
+      page1: { status: { current_health: '15', max_health: '42', temp_health: '5' } },
+    }
+    const result = adaptCharacter(raw)
+    expect(result.hp).toEqual({ current: 15, max: 42, temp: 5 })
+  })
+
+  it('parses current HP of 0 as 0 (not as full HP)', () => {
+    const raw: V1Character = {
+      page1: { status: { current_health: '0', max_health: '42', temp_health: '' } },
+    }
+    const result = adaptCharacter(raw)
+    expect(result.hp.current).toBe(0)
+  })
+})
+
+describe('adaptCharacter — classes and level', () => {
+  it('derives totalLevel from classes array', () => {
+    const raw: V1Character = {
+      page1: {
+        basic_info: {
+          classes: [{ name: 'Fighter', level: '5' }, { name: 'Rogue', level: '3' }],
+        },
+      },
+    }
+    const result = adaptCharacter(raw)
+    expect(result.totalLevel).toBe(8)
+  })
+
+  it('proficiencyBonus is correct for level 8 (+3)', () => {
+    const raw: V1Character = {
+      page1: {
+        basic_info: {
+          classes: [{ name: 'Fighter', level: '5' }, { name: 'Rogue', level: '3' }],
+        },
+      },
+    }
+    const result = adaptCharacter(raw)
+    expect(result.proficiencyBonus).toBe(3)
+  })
+
+  it('falls back to legacy char_class + level when classes array is absent', () => {
+    const raw: V1Character = {
+      page1: { basic_info: { char_class: 'Wizard', level: '7' } },
+    }
+    const result = adaptCharacter(raw)
+    expect(result.classes).toHaveLength(1)
+    expect(result.classes[0]?.name).toBe('Wizard')
+    expect(result.classes[0]?.level).toBe(7)
+    expect(result.totalLevel).toBe(7)
+  })
+
+  it('converts class level from string to number', () => {
+    const result = adaptCharacter(fullChar)
+    expect(typeof result.classes[0]?.level).toBe('number')
+    expect(result.classes[0]?.level).toBe(5)
+  })
+})
+
+describe('adaptCharacter — skills', () => {
+  it('proficient skill has correct bonus (ability mod + prof)', () => {
+    const result = adaptCharacter(fullChar)
+    // Monk: STR 12 (+1 mod), Athletics proficient, profBonus 3 → +4
+    const athletics = result.skills.find((s) => s.name === 'athletics')!
+    expect(athletics.proficient).toBe(true)
+    expect(athletics.bonus).toBe(4)
+  })
+
+  it('non-proficient skill has only ability mod', () => {
+    const result = adaptCharacter(fullChar)
+    // Monk: INT 10 (+0 mod), Arcana not proficient → 0
+    const arcana = result.skills.find((s) => s.name === 'arcana')!
+    expect(arcana.proficient).toBe(false)
+    expect(arcana.bonus).toBe(0)
+  })
+
+  it('expertise gives ability mod + 2×profBonus', () => {
+    const result = adaptCharacter(spellcaster)
+    // Bard: CHA 18 (+4 mod), Performance expertise, profBonus 3 → +4 + 6 = +10
+    const performance = result.skills.find((s) => s.name === 'performance')!
+    expect(performance.expertise).toBe(true)
+    expect(performance.bonus).toBe(10)
+  })
+
+  it('all 18 skills are present', () => {
+    const result = adaptCharacter(fullChar)
+    expect(result.skills).toHaveLength(18)
+    const names = result.skills.map((s) => s.name)
+    expect(names).toContain('perception')
+    expect(names).toContain('sleight_of_hand')
+    expect(names).toContain('animal_handling')
+  })
+})
+
+describe('adaptCharacter — saving throws', () => {
+  it('proficient saving throw has correct bonus', () => {
+    const result = adaptCharacter(fullChar)
+    // Monk: DEX 16 (+3 mod), DEX save proficient, profBonus 3 → +6
+    const dexSave = result.savingThrows.find((s) => s.ability === 'dex')!
+    expect(dexSave.proficient).toBe(true)
+    expect(dexSave.bonus).toBe(6)
+  })
+
+  it('non-proficient saving throw has only ability mod', () => {
+    const result = adaptCharacter(fullChar)
+    // Monk: STR 12 (+1 mod), STR save not proficient → +1
+    const strSave = result.savingThrows.find((s) => s.ability === 'str')!
+    expect(strSave.proficient).toBe(false)
+    expect(strSave.bonus).toBe(1)
+  })
+
+  it('returns all 6 saving throws', () => {
+    const result = adaptCharacter(fullChar)
+    expect(result.savingThrows).toHaveLength(6)
+    const abilities = result.savingThrows.map((s) => s.ability)
+    expect(abilities).toContain('str')
+    expect(abilities).toContain('cha')
+  })
+})
+
+describe('adaptCharacter — spells', () => {
+  it('returns undefined spells for non-spellcaster', () => {
+    const result = adaptCharacter(fullChar)
+    expect(result.spells).toBeUndefined()
+  })
+
+  it('returns spells object for spellcaster', () => {
+    const result = adaptCharacter(spellcaster)
+    expect(result.spells).toBeDefined()
+  })
+
+  it('maps spell ability correctly (cha)', () => {
+    const result = adaptCharacter(spellcaster)
+    expect(result.spells?.ability).toBe('cha')
+  })
+
+  it('adapts spell slots with current = total - used', () => {
+    const result = adaptCharacter(spellcaster)
+    const slot1 = result.spells?.slots.find((s) => s.level === 1)
+    // slot_1: total 4, used 1 → current 3
+    expect(slot1?.max).toBe(4)
+    expect(slot1?.current).toBe(3)
+  })
+
+  it('includes cantrips as level-0 spells', () => {
+    const result = adaptCharacter(spellcaster)
+    const cantrips = result.spells?.known.filter((s) => s.level === 0) ?? []
+    expect(cantrips.length).toBeGreaterThan(0)
+    expect(cantrips[0]?.name).toBe('Vicious Mockery')
+  })
+
+  it('marks prepared spells correctly', () => {
+    const result = adaptCharacter(spellcaster)
+    const healingWord = result.spells?.known.find((s) => s.name === 'Healing Word')
+    expect(healingWord?.prepared).toBe(true)
+    const faeirieFire = result.spells?.known.find((s) => s.name === 'Faerie Fire')
+    expect(faeirieFire?.prepared).toBe(false)
+  })
+
+  it('saveDC is read from spell_info (not recalculated)', () => {
+    const result = adaptCharacter(spellcaster)
+    // fixture stores 14 in spell_save_dc
+    expect(result.spells?.saveDC).toBe(14)
+  })
+})
+
+describe('adaptCharacter — full fixture', () => {
+  it('name is correct', () => {
+    const result = adaptCharacter(fullChar)
+    expect(result.name).toBe('Kanaan Duskwalker')
+  })
+
+  it('race is correct', () => {
+    const result = adaptCharacter(fullChar)
+    expect(result.race).toBe('Humano')
+  })
+
+  it('attacks are adapted', () => {
+    const result = adaptCharacter(fullChar)
+    expect(result.attacks).toHaveLength(2)
+    expect(result.attacks[0]?.name).toBe('Unarmed Strike')
+    expect(result.attacks[1]?.damage).toBe('1d6+3')
+  })
+
+  it('inventory is adapted from both equipment columns', () => {
+    const result = adaptCharacter(fullChar)
+    // col_1 has 3 items, col_2 has 1 item
+    expect(result.inventory).toHaveLength(4)
+    expect(result.inventory[0]?.name).toBe('Shortsword')
+    expect(result.inventory[0]?.weight).toBe(2)
+  })
+
+  it('currency is parsed from strings to numbers', () => {
+    const result = adaptCharacter(fullChar)
+    expect(result.currency).toEqual({ cp: 0, sp: 5, ep: 0, gp: 15, pp: 0 })
+  })
+
+  it('personality fields are populated', () => {
+    const result = adaptCharacter(fullChar)
+    expect(result.personality.traits).toContain('calm')
+    expect(result.personality.ideals).toContain('Respect')
+  })
+
+  it('backstory comes from personality.backstory (not legacy top-level)', () => {
+    const result = adaptCharacter(fullChar)
+    expect(result.backstory).toContain('monastery')
+  })
+
+  it('allies from allies_organizations.name', () => {
+    const result = adaptCharacter(fullChar)
+    expect(result.allies).toBe('Monastério da Palma Aberta')
+  })
+
+  it('notes are concatenated from notes_1 and notes_2', () => {
+    const result = adaptCharacter(fullChar)
+    expect(result.notes).toContain('Ki points')
+    expect(result.notes).toContain('Flurry of Blows')
+  })
+
+  it('passivePerception is derived correctly', () => {
+    const result = adaptCharacter(fullChar)
+    // Monk: WIS 14 (+2), Perception proficient, profBonus 3 → 10 + 2 + 3 = 15
+    expect(result.passivePerception).toBe(15)
+  })
+
+  it('deathSaves are all false', () => {
+    const result = adaptCharacter(fullChar)
+    expect(result.deathSaves).toEqual({ successes: 0, failures: 0 })
+  })
+
+  it('deathSaves count true booleans correctly', () => {
+    const result = adaptCharacter(spellcaster)
+    // spellcaster: success_1 = true, fail_1 = true
+    expect(result.deathSaves).toEqual({ successes: 1, failures: 1 })
+  })
+
+  it('updatedAt is preserved from raw', () => {
+    const result = adaptCharacter(fullChar)
+    expect(result.updatedAt).toBe(1700000000000)
+  })
+
+  it('images are mapped when present', () => {
+    const charWithImage: V1Character = {
+      ...fullChar,
+      images: { character: 'data:image/png;base64,abc123', symbol: '' },
+    }
+    const result = adaptCharacter(charWithImage)
+    expect(result.images.character).toBe('data:image/png;base64,abc123')
+    expect(result.images.symbol).toBeUndefined()
+  })
+
+  it('empty image strings are not included in images object', () => {
+    const result = adaptCharacter(fullChar)
+    expect(result.images.character).toBeUndefined()
+    expect(result.images.symbol).toBeUndefined()
+  })
+})
