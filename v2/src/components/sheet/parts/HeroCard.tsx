@@ -3,11 +3,14 @@ import { Badge } from '../ui/Badge'
 
 interface HeroCardProps {
   character: Character
+  compact?: boolean
 }
 
-export function HeroCard({ character }: HeroCardProps) {
+export function HeroCard({ character, compact = false }: HeroCardProps) {
   const portrait = character.images.character
   const firstClass = character.classes[0]
+  const portraitSize = compact ? 58 : 72
+  const nameFontSize = compact ? 18 : 22
 
   return (
     <div
@@ -17,18 +20,18 @@ export function HeroCard({ character }: HeroCardProps) {
         background: 'linear-gradient(180deg, #1B1725, #15121C)',
         border: '1px solid #2A2537',
         borderRadius: 16,
-        padding: 18,
+        padding: compact ? 14 : 18,
         overflow: 'hidden',
       }}
     >
-      {/* Responsive layout: column + centered on mobile, row on desktop */}
-      <div className="flex flex-col items-center gap-3 lg:flex-row lg:items-center lg:gap-4">
+      {/* Always horizontal: portrait left, identity right */}
+      <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
         {/* Portrait */}
         <div
-          className="flex-shrink-0 relative"
           style={{
-            width: 72,
-            height: 72,
+            width: portraitSize,
+            height: portraitSize,
+            flexShrink: 0,
             borderRadius: 12,
             background: portrait
               ? `url(${portrait}) center/cover`
@@ -41,9 +44,10 @@ export function HeroCard({ character }: HeroCardProps) {
             alignItems: 'center',
             justifyContent: 'center',
             fontFamily: "'Cinzel', Georgia, serif",
-            fontSize: 28,
+            fontSize: compact ? 22 : 28,
             color: '#D4A017',
             fontWeight: 600,
+            position: 'relative',
           }}
         >
           {!portrait && (character.name[0] ?? '?')}
@@ -73,11 +77,11 @@ export function HeroCard({ character }: HeroCardProps) {
         </div>
 
         {/* Identity */}
-        <div className="flex-1 min-w-0 text-center lg:text-left" style={{ minWidth: 0 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
           <div
             style={{
               fontFamily: "'Cinzel', Georgia, serif",
-              fontSize: 22,
+              fontSize: nameFontSize,
               fontWeight: 600,
               color: '#F4EFE0',
               letterSpacing: 0.3,
@@ -98,9 +102,7 @@ export function HeroCard({ character }: HeroCardProps) {
               gap: 6,
               alignItems: 'center',
               flexWrap: 'wrap',
-              justifyContent: 'center',
             }}
-            className="lg:justify-start"
           >
             {character.race && <span>{character.race}</span>}
             {character.race && firstClass && (
@@ -117,16 +119,14 @@ export function HeroCard({ character }: HeroCardProps) {
             {character.background && <span>{character.background}</span>}
           </div>
 
-          {/* Conditions / inspiration badges */}
-          <div
-            className="flex flex-wrap gap-1 mt-1 justify-center lg:justify-start"
-          >
-            {character.inspiration && (
+          {/* Inspiration / condition badges */}
+          {character.inspiration && (
+            <div style={{ marginTop: 6, display: 'flex', gap: 4, flexWrap: 'wrap' }}>
               <Badge variant="purple" icon={<span>✦</span>}>
                 Inspirado
               </Badge>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

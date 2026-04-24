@@ -8,7 +8,10 @@ export function StatusTab() {
 
   return (
     <div className="space-y-4">
-      <HeroCard character={character} />
+      {/* HeroCard only on mobile — desktop already has the topbar with name/class/level */}
+      <div className="lg:hidden">
+        <HeroCard character={character} compact />
+      </div>
       <HpBlock character={character} />
       {/* Atributos, Saves, Skills, Features — B.1b.2 */}
     </div>
