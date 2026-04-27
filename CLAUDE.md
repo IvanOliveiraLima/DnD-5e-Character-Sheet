@@ -118,6 +118,62 @@ Tests live in `/tests/`. The `idb` library is mocked via `vi.mock('idb')` with a
 | `v2/src/routes.tsx` | React Router v6 config (/, /login, * → /) |
 | `v2/tests/db.test.ts` | Basic test for IndexedDB wrapper |
 
+### v2 derived-model philosophy
+
+The v1 codebase treated character sheets as "live calculators" — values like AC,
+Initiative, Passive Perception, ability modifiers, skill bonuses, and save
+bonuses were computed on-the-fly during render but rarely persisted. When a
+user changed an ability score, the displayed bonus updated immediately, but
+the saved JSON often contained empty strings for derived fields.
+
+The v2 adopts the opposite approach: **derived-model**.
+
+#### Single source of truth
+
+The adapter (`v2/src/data/adapter.ts`) is the boundary. It reads the v1 raw
+schema (which may contain stale or empty derived fields) and produces a domain
+`Character` (`v2/src/domain/character.ts`) with **all derived values calculated
+from base state**, regardless of what the v1 saved.
+
+Examples of fields always derived in v2 (ignoring v1 stored values):
+
+- `ac` — computed as `10 + abilityModifier(dex)` when v1 field is empty/zero
+- `initiative` — computed as `abilityModifier(dex)` when v1 field is empty
+- `passivePerception` — always `passivePerception(wis, hasPerceptionProf, hasExpertise, profBonus)`
+- `proficiencyBonus` — always `proficiencyBonus(totalLevel)`
+- `skill.bonus` — always `skillBonus(ability, proficient, expertise, profBonus)`
+- `savingThrow.bonus` — always `savingThrowBonus(ability, proficient, profBonus)`
+
+When the user customizes a derived field with a non-default value (e.g., enters
+AC 17 because of magical armor), the adapter respects it. The rule is:
+
+- **If v1 value is empty/zero/default**: calculate from state.
+- **If v1 value is a meaningful override**: use it.
+
+#### Why this matters for future fields
+
+When implementing new fields/components, **always ask**: is this derivable from
+base state, or is it user-entered data?
+
+- **Derivable** (calculate it, ignore v1 stale value): hp.max from CON+class,
+  spell save DC from spellcasting ability, attack bonus from STR/DEX+prof.
+- **User-entered** (read from v1 directly): character name, race, class
+  selection, attack damage dice, inventory items, backstory text.
+
+Components in `v2/src/components/sheet/` should never recalculate derived
+values themselves. The domain is the contract: if `character.ac` is wrong,
+fix the adapter.
+
+#### Trade-offs
+
+- **Pro:** v2 is consistent. AC always reflects current DEX. Skill bonuses
+  never lag behind ability changes. No "ghost values" from old saves.
+- **Pro:** Less manual work for the user. They edit ability scores, the rest
+  updates automatically.
+- **Con:** Loses fidelity for edge cases the user manually customized in v1.
+  Mitigation: when value is meaningfully non-default, the adapter respects it.
+- **Con:** More compute on every render (negligible for sheet of one character).
+
 ### v2 design reference
 
 The visual source of truth is in `design-reference/tbt-rpg/project/` (in `.gitignore` — not committed). Key files:
