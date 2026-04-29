@@ -193,6 +193,16 @@ If `design-reference/` is absent in a new session, ask the user to provide the f
 - Character HP is stored as strings in v1 (`page1.status.current_health`, `max_health`, `temp_health`)
 - `CharacterSummary` adapter normalises to `{ hp: { current, max, temp } }` as numbers
 
+### v2 development phase pattern
+
+Each v2 feature follows a three-step cycle:
+
+1. **Audit** — investigate the v1 schema for the feature area before writing any code. Produces an `AUDIT-B*.md` file documenting raw field paths, schema variants (standard vs. legacy), adapter behavior, and open questions for the user.
+2. **Pre-fix** — fix any silent adapter bugs or domain shape issues revealed by the audit (currency long-form fallback, proficiency field merge, allies removal, etc.). Isolated branch, regression tests, merged before the visual phase.
+3. **Implementation** — build the visual components with the adapter already correct. Components read from `character.*`, never re-derive.
+
+This order matters: components built on a broken adapter produce invisible data loss.
+
 ### v2 key patterns
 
 - **No class names on CharSelect** — uses inline styles matching the prototype exactly (the T object)
