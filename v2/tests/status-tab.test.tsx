@@ -44,7 +44,7 @@ const EIRA: Character = {
     skill('Stealth', 'dex', 7, true),
     skill('Survival', 'wis', 6, true),
   ],
-  proficiencies: { weapons: 'Longbow, Shortsword', armor: 'Light, Medium', tools: '', languages: 'Common, Elvish, Sylvan', other: '' },
+  proficiencies: { weaponsAndArmor: 'Longbow, Shortsword, Light, Medium', tools: '', languages: 'Common, Elvish, Sylvan', other: '' },
   attacks: [],
   inventory: [],
   currency: { pp: 0, gp: 50, ep: 0, sp: 20, cp: 5 },
