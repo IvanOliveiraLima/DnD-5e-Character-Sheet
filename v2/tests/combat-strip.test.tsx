@@ -25,7 +25,7 @@ const BASE: Character = {
   inspiration: false,
   savingThrows: [],
   skills: [],
-  proficiencies: { weapons: '', armor: '', tools: '', languages: '', other: '' },
+  proficiencies: { weaponsAndArmor: '', tools: '', languages: '', other: '' },
   attacks: [],
   inventory: [],
   currency: { pp: 0, gp: 0, ep: 0, sp: 0, cp: 0 },

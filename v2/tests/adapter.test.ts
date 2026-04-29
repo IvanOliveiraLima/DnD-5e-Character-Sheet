@@ -932,3 +932,73 @@ describe('adaptCharacter — features from v1 string', () => {
     expect(adaptCharacter(raw).features).toEqual([])
   })
 })
+
+describe('adaptCharacter — currency schema variants', () => {
+  it('reads currency from abbreviated schema (cp/sp/gp)', () => {
+    const raw: V1Character = {
+      page2: { equipment: { currency: { cp: '5', sp: '10', gp: '25' } } },
+    }
+    expect(adaptCharacter(raw).currency).toEqual({ pp: 0, gp: 25, ep: 0, sp: 10, cp: 5 })
+  })
+
+  it('reads currency from long-form schema (copper/gold)', () => {
+    const raw: V1Character = {
+      page2: { equipment: { currency: { copper: '5', gold: '25' } } },
+    }
+    expect(adaptCharacter(raw).currency).toEqual({ pp: 0, gp: 25, ep: 0, sp: 0, cp: 5 })
+  })
+
+  it('prefers abbreviated schema over long-form when both present', () => {
+    const raw: V1Character = {
+      page2: { equipment: { currency: { cp: '5', copper: '999' } } },
+    }
+    expect(adaptCharacter(raw).currency.cp).toBe(5)
+  })
+})
+
+describe('adaptCharacter — proficiency schema variants', () => {
+  it('reads proficiencies from standard schema (weapon_profs + armor_profs combined)', () => {
+    const raw: V1Character = {
+      page1: {
+        proficiencies: {
+          weapon_profs:   'Simple weapons, shortswords',
+          armor_profs:    'Light armor',
+          tool_profs:     'Herbalism kit',
+          language_profs: 'Common, Elvish',
+        },
+      },
+    }
+    const result = adaptCharacter(raw)
+    expect(result.proficiencies.weaponsAndArmor).toBe('Simple weapons, shortswords, Light armor')
+    expect(result.proficiencies.tools).toBe('Herbalism kit')
+    expect(result.proficiencies.languages).toBe('Common, Elvish')
+  })
+
+  it('reads proficiencies from legacy schema (weapon_armor combined)', () => {
+    const raw: V1Character = {
+      page1: {
+        proficiencies: {
+          weapon_armor: 'Light armor, shields, short swords',
+          tools:        'Herbalism kit',
+          languages:    'Elvish, Common, Sylvan',
+        },
+      },
+    }
+    const result = adaptCharacter(raw)
+    expect(result.proficiencies.weaponsAndArmor).toBe('Light armor, shields, short swords')
+    expect(result.proficiencies.tools).toBe('Herbalism kit')
+    expect(result.proficiencies.languages).toBe('Elvish, Common, Sylvan')
+  })
+
+  it('handles only weapon_profs without armor_profs', () => {
+    const raw: V1Character = {
+      page1: { proficiencies: { weapon_profs: 'Simple weapons' } },
+    }
+    expect(adaptCharacter(raw).proficiencies.weaponsAndArmor).toBe('Simple weapons')
+  })
+
+  it('returns empty proficiencies when page1.proficiencies is absent', () => {
+    const result = adaptCharacter({ page1: {} })
+    expect(result.proficiencies).toEqual({ weaponsAndArmor: '', tools: '', languages: '', other: '' })
+  })
+})
