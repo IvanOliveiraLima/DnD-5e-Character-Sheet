@@ -121,8 +121,7 @@ export interface Character {
 
   // Proficiencies (free text)
   proficiencies: {
-    weapons: string
-    armor: string
+    weaponsAndArmor: string  // weapons + armor combined (v1 stores combined or separate)
     tools: string
     languages: string
     other: string

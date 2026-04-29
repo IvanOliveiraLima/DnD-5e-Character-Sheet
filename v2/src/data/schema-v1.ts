@@ -134,11 +134,17 @@ export interface V1AttackEntry {
 }
 
 export interface V1Proficiencies {
+  // Standard v1 schema (fixtures)
   weapon_profs?:   string
   armor_profs?:    string
   tool_profs?:     string
   language_profs?: string
   other_profs?:    string
+  // Legacy v1 schema (older exports, e.g. Eira design-reference)
+  weapon_armor?: string   // weapons + armor combined in a single field
+  tools?:        string
+  languages?:    string
+  other?:        string
 }
 
 export interface V1Page1 {
@@ -169,7 +175,12 @@ export interface V1EquipmentRow {
 }
 
 export interface V1Currency {
+  // Abbreviated form (standard v1 fixtures)
   cp?: string; sp?: string; ep?: string; gp?: string; pp?: string
+  // Long-form (legacy v1 versions, e.g. design-reference exports)
+  copper?: string; silver?: string; electrum?: string; gold?: string; platinum?: string
+  // Computed/auxiliary fields — ignored by adapter
+  total?: string; base?: string
 }
 
 export interface V1Equipment {

@@ -443,12 +443,34 @@ function adaptInventory(raw: V1Character): InventoryItem[] {
 
 function adaptCurrency(raw: V1Character) {
   const c = raw.page2?.equipment?.currency
+  if (!c) return { pp: 0, gp: 0, ep: 0, sp: 0, cp: 0 }
+  // Prefer abbreviated schema (cp/sp/ep/gp/pp); fall back to long-form (copper/silver/…)
   return {
-    pp: parseIntSafe(c?.pp),
-    gp: parseIntSafe(c?.gp),
-    ep: parseIntSafe(c?.ep),
-    sp: parseIntSafe(c?.sp),
-    cp: parseIntSafe(c?.cp),
+    pp: parseIntSafe(c.pp ?? c.platinum),
+    gp: parseIntSafe(c.gp ?? c.gold),
+    ep: parseIntSafe(c.ep ?? c.electrum),
+    sp: parseIntSafe(c.sp ?? c.silver),
+    cp: parseIntSafe(c.cp ?? c.copper),
+  }
+}
+
+function joinNonEmpty(a: string | undefined, b: string | undefined, sep: string): string {
+  const aTrim = (a ?? '').trim()
+  const bTrim = (b ?? '').trim()
+  if (aTrim && bTrim) return `${aTrim}${sep}${bTrim}`
+  return aTrim || bTrim
+}
+
+function adaptProficiencies(raw: V1Character): Character['proficiencies'] {
+  const p = raw.page1?.proficiencies
+  if (!p) return { weaponsAndArmor: '', tools: '', languages: '', other: '' }
+  // Legacy schema has weapon_armor combined; standard schema has weapon_profs + armor_profs separate
+  const weaponsAndArmor = p.weapon_armor ?? joinNonEmpty(p.weapon_profs, p.armor_profs, ', ')
+  return {
+    weaponsAndArmor: str(weaponsAndArmor),
+    tools:           str(p.tool_profs ?? p.tools),
+    languages:       str(p.language_profs ?? p.languages),
+    other:           str(p.other_profs ?? p.other),
   }
 }
 
@@ -503,12 +525,11 @@ export function adaptCharacter(raw: V1Character): Character {
   const profBonus = proficiencyBonus(totalLvl)
   const abilities = adaptAbilities(raw)
 
-  const bi    = raw.page1?.basic_info
-  const ci    = raw.page1?.character_info
-  const tb    = raw.page1?.top_bar
-  const profs = raw.page1?.proficiencies
-  const p4    = raw.page4
-  const p5    = raw.page5
+  const bi = raw.page1?.basic_info
+  const ci = raw.page1?.character_info
+  const tb = raw.page1?.top_bar
+  const p4 = raw.page4
+  const p5 = raw.page5
 
   const skills     = adaptSkills(raw, abilities, profBonus)
   const perception = skills.find((s) => s.name === 'Perception')
@@ -572,13 +593,7 @@ export function adaptCharacter(raw: V1Character): Character {
     savingThrows: adaptSavingThrows(raw, abilities, profBonus),
     skills,
 
-    proficiencies: {
-      weapons:   str(profs?.weapon_profs),
-      armor:     str(profs?.armor_profs),
-      tools:     str(profs?.tool_profs),
-      languages: str(profs?.language_profs),
-      other:     str(profs?.other_profs),
-    },
+    proficiencies: adaptProficiencies(raw),
 
     attacks: adaptAttacks(raw),
     ...(spells !== undefined ? { spells } : {}),
