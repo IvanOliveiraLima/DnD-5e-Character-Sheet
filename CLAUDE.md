@@ -1459,6 +1459,21 @@ opcional pré-preenche, título/botão mudam, chama `updateCampaign`) — DRY, s
 lápis no `CampaignDetail` visível só pro mestre. (Não confundir com o `EditDisplayNameModal`, que é o nome de
 exibição do usuário.)
 
+### UX de ficha e HP — feedback da primeira sessão de mesa (COMPLETED — PRs #331, #332, #333)
+Três ajustes vindos de jogar de verdade:
+
+- **Sem autofoco ao expandir item (#331)** — os campos de texto livre da ficha (inventário, traços, magias)
+  tinham `autoFocus={!locked}`, então abrir um item em modo edição focava o campo e abria o teclado no
+  mobile. Removido; o usuário toca no campo quando quer editar.
+- **Painel de combate: mais espaço + delta + sem setas (#332)** — o painel cortava a vida dos tokens. Ficou
+  mais largo no desktop (300→360; mobile segue compacto no bottom-sheet), os controles de HP ganharam folga,
+  e ao clicar +/- aparece um indicador de **delta** por combatente que some em 2s (espelha o `hp-delta-badge`
+  da ficha). Também removemos as setas nativas do `input[type=number]` (classe `.no-spinner` no `NumberField`
+  e nos inputs do painel) — os botões +/- já cobrem a função e as setas reservavam espaço que cortava o número.
+- **Segurar +/- para ±10 (#333)** — na ficha e no combate, tocar no +/- é ±1 e **segurar repete ±10** até
+  soltar. Hook `useHoldRepeat` + primitivo `HoldButton` (evita hook dentro de `.map`); com guard de "press
+  real" pra não disparar no hover, e cadência calma (220ms).
+
 ---
 
 ## Patterns established during C.1.c
@@ -2238,6 +2253,8 @@ function buildInviteLink(): string {
 | Alça tem prioridade sobre o corpo; token/UI têm prioridade sobre a área | #320, #321 | Ordem de hit-test no pointerdown resolve o empilhamento sem modos extras |
 | `handleAreaCommit` grava `radius` além de x/y/x2/y2 | #321 | Resize de círculo/quadrado só muda o raio; sem isso a mudança não persistia (só local) |
 | Editar campanha reusa a policy de UPDATE existente; modal de criação vira create/edit | #328 | RLS de UPDATE é por linha (mesma do updateAutoInitiative) -> sem SQL; prop opcional evita um segundo modal |
+| Hold-repeat como HoldButton, nunca hook dentro de .map | #333 | Rules of hooks; o botão encapsula useHoldRepeat e serve painel (por combatente) e ficha |
+| Guard de press real no hold: leave/up sem pointerdown não faz nada | #333 | onPointerLeave chegava a tapear no hover; o ref pressed + leave=cancel matam o disparo acidental |
 
 ---
 
