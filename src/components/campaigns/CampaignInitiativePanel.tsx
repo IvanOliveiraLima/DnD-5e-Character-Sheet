@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from '@/i18n'
 import { HelpHint } from '@/components/HelpHint'
+import { HoldButton } from '@/components/primitives/HoldButton'
 import {
   sortCombatants,
   startCombat,
@@ -387,20 +388,26 @@ export function CampaignInitiativePanel({ isMaster, tracker, linkedChars, onUpda
                   c.hp ? (
                     /* Monster with HP — editable controls */
                     <div style={{ display: 'flex', alignItems: 'center', gap: 2, flexShrink: 0 }}>
-                      <button
+                      <HoldButton
                         data-testid={`hp-minus-${c.id}`}
                         aria-label={t('initiative.hp_aria_minus')}
-                        onClick={() => {
+                        style={miniBtn}
+                        onTap={() => {
                           onUpdate(setCombatantHp(tracker, c.id, {
                             ...c.hp!,
                             current: Math.max(0, c.hp!.current - 1),
                           }))
                           bumpCombatantDelta(c.id, -1)
                         }}
-                        style={miniBtn}
+                        onHoldTick={() => {
+                          const newCurrent = Math.max(0, c.hp!.current - 10)
+                          const net = c.hp!.current - newCurrent
+                          onUpdate(setCombatantHp(tracker, c.id, { ...c.hp!, current: newCurrent }))
+                          if (net > 0) bumpCombatantDelta(c.id, -net)
+                        }}
                       >
                         −
-                      </button>
+                      </HoldButton>
                       <input
                         type="number"
                         className="no-spinner"
@@ -426,20 +433,26 @@ export function CampaignInitiativePanel({ isMaster, tracker, linkedChars, onUpda
                       <span style={{ color: T.textMuted, fontSize: 11, flexShrink: 0 }}>
                         /{c.hp.max}
                       </span>
-                      <button
+                      <HoldButton
                         data-testid={`hp-plus-${c.id}`}
                         aria-label={t('initiative.hp_aria_plus')}
-                        onClick={() => {
+                        style={miniBtn}
+                        onTap={() => {
                           onUpdate(setCombatantHp(tracker, c.id, {
                             ...c.hp!,
                             current: Math.min(c.hp!.max, c.hp!.current + 1),
                           }))
                           bumpCombatantDelta(c.id, +1)
                         }}
-                        style={miniBtn}
+                        onHoldTick={() => {
+                          const newCurrent = Math.min(c.hp!.max, c.hp!.current + 10)
+                          const net = newCurrent - c.hp!.current
+                          onUpdate(setCombatantHp(tracker, c.id, { ...c.hp!, current: newCurrent }))
+                          if (net > 0) bumpCombatantDelta(c.id, +net)
+                        }}
                       >
                         +
-                      </button>
+                      </HoldButton>
                       {hpDeltas[c.id] ? (
                         <span
                           data-testid={`combatant-hp-delta-${c.id}`}

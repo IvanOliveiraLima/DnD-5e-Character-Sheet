@@ -93,8 +93,8 @@ export function HpBlock({ character, onUpdate }: HpBlockProps) {
   const [delta, setDelta] = useState(0)
   const deltaTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  function bumpDelta(dir: -1 | 1) {
-    setDelta(d => d + dir)
+  function bumpDelta(amount: number) {
+    setDelta(d => d + amount)
     if (deltaTimer.current) clearTimeout(deltaTimer.current)
     deltaTimer.current = setTimeout(() => setDelta(0), 2000)
   }
@@ -103,21 +103,16 @@ export function HpBlock({ character, onUpdate }: HpBlockProps) {
     if (deltaTimer.current) clearTimeout(deltaTimer.current)
   }, [])
 
-  function stepHp(dir: -1 | 1) {
+  function stepHp(dir: -1 | 1, amount = 1) {
     if (!onUpdate) return
     if (dir === -1) {
-      if (hp.temp > 0) {
-        onUpdate({ hp: { ...hp, temp: hp.temp - 1 } })
-        bumpDelta(-1)
-      } else if (current > 0) {
-        onUpdate({ hp: { ...hp, current: current - 1 } })
-        bumpDelta(-1)
-      }
+      let rem = amount, temp = hp.temp, cur = current, net = 0
+      const drainTemp = Math.min(temp, rem); temp -= drainTemp; rem -= drainTemp; net += drainTemp
+      const drainCur = Math.min(cur, rem); cur -= drainCur; net += drainCur
+      if (net > 0) { onUpdate({ hp: { ...hp, temp, current: cur } }); bumpDelta(-net) }
     } else {
-      if (current < max) {
-        onUpdate({ hp: { ...hp, current: current + 1 } })
-        bumpDelta(1)
-      }
+      const add = Math.min(amount, Math.max(0, max - current))
+      if (add > 0) { onUpdate({ hp: { ...hp, current: current + add } }); bumpDelta(add) }
     }
   }
 
@@ -198,6 +193,7 @@ export function HpBlock({ character, onUpdate }: HpBlockProps) {
             max={max > 0 ? max : 999}
             onChange={n => { if (onUpdate) onUpdate({ hp: { ...hp, current: n } }) }}
             onStep={stepHp}
+            {...(onUpdate ? { onHoldStep: (dir: -1 | 1) => stepHp(dir, 10) } : {})}
             aria-label={t('aria.hp_current_input')}
             data-testid="hp-current-input"
             showSteppers={!!onUpdate}
