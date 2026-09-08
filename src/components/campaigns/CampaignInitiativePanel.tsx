@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from '@/i18n'
 import { HelpHint } from '@/components/HelpHint'
 import {
@@ -117,6 +117,20 @@ export function CampaignInitiativePanel({ isMaster, tracker, linkedChars, onUpda
   const [monsterHp,      setMonsterHp]      = useState('')
   const [monsterTokenId, setMonsterTokenId] = useState('')
   const [showMonsterForm, setShowMonsterForm] = useState(false)
+
+  const [hpDeltas, setHpDeltas] = useState<Record<string, number>>({})
+  const deltaTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({})
+
+  function bumpCombatantDelta(id: string, amount: number) {
+    setHpDeltas(prev => ({ ...prev, [id]: (prev[id] ?? 0) + amount }))
+    if (deltaTimers.current[id]) clearTimeout(deltaTimers.current[id])
+    deltaTimers.current[id] = setTimeout(() => {
+      setHpDeltas(prev => { const n = { ...prev }; delete n[id]; return n })
+      delete deltaTimers.current[id]
+    }, 2000)
+  }
+
+  useEffect(() => () => { Object.values(deltaTimers.current).forEach(clearTimeout) }, [])
 
   const sorted = sortCombatants(tracker.combatants)
 
@@ -303,7 +317,7 @@ export function CampaignInitiativePanel({ isMaster, tracker, linkedChars, onUpda
           {/* name column */}
           <span style={{ flex: 1 }} />
           {/* HP column (master only) — before INIC so placeholder keeps INIC aligned */}
-          {isMaster && <span style={{ ...colLabel, minWidth: 76 }}>{t('initiative.hp')}</span>}
+          {isMaster && <span style={{ ...colLabel, minWidth: 92 }}>{t('initiative.hp')}</span>}
           {/* initiative column — matches input width: 38 */}
           <span style={{ ...colLabel, width: 38 }}>{t('initiative.value')}</span>
           {/* spacer for remove button (master only) */}
@@ -376,10 +390,13 @@ export function CampaignInitiativePanel({ isMaster, tracker, linkedChars, onUpda
                       <button
                         data-testid={`hp-minus-${c.id}`}
                         aria-label={t('initiative.hp_aria_minus')}
-                        onClick={() => onUpdate(setCombatantHp(tracker, c.id, {
-                          ...c.hp!,
-                          current: Math.max(0, c.hp!.current - 1),
-                        }))}
+                        onClick={() => {
+                          onUpdate(setCombatantHp(tracker, c.id, {
+                            ...c.hp!,
+                            current: Math.max(0, c.hp!.current - 1),
+                          }))
+                          bumpCombatantDelta(c.id, -1)
+                        }}
                         style={miniBtn}
                       >
                         −
@@ -400,25 +417,40 @@ export function CampaignInitiativePanel({ isMaster, tracker, linkedChars, onUpda
                         }}
                         style={{
                           ...inputBase,
-                          width:     32,
+                          width:     44,
                           textAlign: 'center',
                           padding:   '2px 3px',
                         }}
                       />
-                      <span style={{ color: T.textMuted, fontSize: 10, flexShrink: 0 }}>
+                      <span style={{ color: T.textMuted, fontSize: 11, flexShrink: 0 }}>
                         /{c.hp.max}
                       </span>
                       <button
                         data-testid={`hp-plus-${c.id}`}
                         aria-label={t('initiative.hp_aria_plus')}
-                        onClick={() => onUpdate(setCombatantHp(tracker, c.id, {
-                          ...c.hp!,
-                          current: Math.min(c.hp!.max, c.hp!.current + 1),
-                        }))}
+                        onClick={() => {
+                          onUpdate(setCombatantHp(tracker, c.id, {
+                            ...c.hp!,
+                            current: Math.min(c.hp!.max, c.hp!.current + 1),
+                          }))
+                          bumpCombatantDelta(c.id, +1)
+                        }}
                         style={miniBtn}
                       >
                         +
                       </button>
+                      {hpDeltas[c.id] ? (
+                        <span
+                          data-testid={`combatant-hp-delta-${c.id}`}
+                          aria-live="polite"
+                          style={{
+                            fontSize: 11, fontWeight: 700, fontVariantNumeric: 'tabular-nums',
+                            color: hpDeltas[c.id]! > 0 ? '#5DCAA5' : '#E24B4A', flexShrink: 0,
+                          }}
+                        >
+                          {hpDeltas[c.id]! > 0 ? `+${hpDeltas[c.id]}` : `\u2212${Math.abs(hpDeltas[c.id]!)}`}
+                        </span>
+                      ) : null}
                     </div>
                   ) : linkedHp ? (
                     /* Linked player character — read-only HP from live sheet */
