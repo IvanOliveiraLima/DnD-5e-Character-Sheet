@@ -192,7 +192,9 @@ describe('HpBlock — HP steppers', () => {
     const onUpdate = vi.fn()
     renderWithI18n(<HpBlock character={char} onUpdate={onUpdate} />, 'pt')
     const currentHpWrapper = screen.getAllByTestId('number-field-stepper-wrapper')[0]!
-    fireEvent.click(within(currentHpWrapper).getByRole('button', { name: 'Diminuir' }))
+    const btn = within(currentHpWrapper).getByRole('button', { name: 'Diminuir' })
+    fireEvent.pointerDown(btn)
+    fireEvent.pointerUp(btn)
     expect(onUpdate).toHaveBeenCalledWith({ hp: { current: 29, max: 45, temp: 0 } })
   })
 
@@ -201,7 +203,9 @@ describe('HpBlock — HP steppers', () => {
     const onUpdate = vi.fn()
     renderWithI18n(<HpBlock character={char} onUpdate={onUpdate} />, 'pt')
     const currentHpWrapper = screen.getAllByTestId('number-field-stepper-wrapper')[0]!
-    fireEvent.click(within(currentHpWrapper).getByRole('button', { name: 'Aumentar' }))
+    const btn = within(currentHpWrapper).getByRole('button', { name: 'Aumentar' })
+    fireEvent.pointerDown(btn)
+    fireEvent.pointerUp(btn)
     expect(onUpdate).toHaveBeenCalledWith({ hp: { current: 31, max: 45, temp: 0 } })
   })
 

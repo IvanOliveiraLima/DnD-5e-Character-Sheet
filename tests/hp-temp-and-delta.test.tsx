@@ -86,6 +86,13 @@ function getTempHpStepper() {
   return screen.getAllByTestId('number-field-stepper-wrapper')[1]!
 }
 
+// Current HP stepper uses pointer events (onHoldStep is set → no onClick).
+// Simulate a quick tap: pointerDown then pointerUp before the hold threshold.
+function tapBtn(btn: HTMLElement) {
+  fireEvent.pointerDown(btn)
+  fireEvent.pointerUp(btn)
+}
+
 // ── Part A: temp HP absorption ────────────────────────────────────────────────
 
 describe('HpBlock — temp HP absorption (onStep)', () => {
@@ -97,14 +104,14 @@ describe('HpBlock — temp HP absorption (onStep)', () => {
   it('damage (−) reduces temp first when temp > 0, current unchanged', () => {
     const onUpdate = vi.fn()
     renderWithI18n(<HpBlock character={BASE} onUpdate={onUpdate} />, 'en')
-    fireEvent.click(within(getCurrentHpStepper()).getByRole('button', { name: 'Decrement' }))
+    tapBtn(within(getCurrentHpStepper()).getByRole('button', { name: 'Decrement' }))
     expect(onUpdate).toHaveBeenCalledWith({ hp: { ...BASE.hp, temp: 4 } })
   })
 
   it('damage (−) does not touch current HP when temp > 0', () => {
     const onUpdate = vi.fn()
     renderWithI18n(<HpBlock character={BASE} onUpdate={onUpdate} />, 'en')
-    fireEvent.click(within(getCurrentHpStepper()).getByRole('button', { name: 'Decrement' }))
+    tapBtn(within(getCurrentHpStepper()).getByRole('button', { name: 'Decrement' }))
     const payload = onUpdate.mock.calls[0]![0] as { hp: { current: number } }
     expect(payload.hp.current).toBe(39)
   })
@@ -113,7 +120,7 @@ describe('HpBlock — temp HP absorption (onStep)', () => {
     const onUpdate = vi.fn()
     const char = { ...BASE, hp: { current: 39, max: 45, temp: 0 } }
     renderWithI18n(<HpBlock character={char} onUpdate={onUpdate} />, 'en')
-    fireEvent.click(within(getCurrentHpStepper()).getByRole('button', { name: 'Decrement' }))
+    tapBtn(within(getCurrentHpStepper()).getByRole('button', { name: 'Decrement' }))
     expect(onUpdate).toHaveBeenCalledWith({ hp: { current: 38, max: 45, temp: 0 } })
   })
 
@@ -121,7 +128,7 @@ describe('HpBlock — temp HP absorption (onStep)', () => {
     const onUpdate = vi.fn()
     const char = { ...BASE, hp: { current: 0, max: 45, temp: 3 } }
     renderWithI18n(<HpBlock character={char} onUpdate={onUpdate} />, 'en')
-    fireEvent.click(within(getCurrentHpStepper()).getByRole('button', { name: 'Decrement' }))
+    tapBtn(within(getCurrentHpStepper()).getByRole('button', { name: 'Decrement' }))
     expect(onUpdate).toHaveBeenCalledWith({ hp: { current: 0, max: 45, temp: 2 } })
   })
 
@@ -129,14 +136,14 @@ describe('HpBlock — temp HP absorption (onStep)', () => {
     const onUpdate = vi.fn()
     const char = { ...BASE, hp: { current: 0, max: 45, temp: 0 } }
     renderWithI18n(<HpBlock character={char} onUpdate={onUpdate} />, 'en')
-    fireEvent.click(within(getCurrentHpStepper()).getByRole('button', { name: 'Decrement' }))
+    tapBtn(within(getCurrentHpStepper()).getByRole('button', { name: 'Decrement' }))
     expect(onUpdate).not.toHaveBeenCalled()
   })
 
   it('heal (+) increases current only; temp unchanged', () => {
     const onUpdate = vi.fn()
     renderWithI18n(<HpBlock character={BASE} onUpdate={onUpdate} />, 'en')
-    fireEvent.click(within(getCurrentHpStepper()).getByRole('button', { name: 'Increment' }))
+    tapBtn(within(getCurrentHpStepper()).getByRole('button', { name: 'Increment' }))
     expect(onUpdate).toHaveBeenCalledWith({ hp: { current: 40, max: 45, temp: 5 } })
   })
 
@@ -144,7 +151,7 @@ describe('HpBlock — temp HP absorption (onStep)', () => {
     const onUpdate = vi.fn()
     const char = { ...BASE, hp: { current: 45, max: 45, temp: 5 } }
     renderWithI18n(<HpBlock character={char} onUpdate={onUpdate} />, 'en')
-    fireEvent.click(within(getCurrentHpStepper()).getByRole('button', { name: 'Increment' }))
+    tapBtn(within(getCurrentHpStepper()).getByRole('button', { name: 'Increment' }))
     expect(onUpdate).not.toHaveBeenCalled()
   })
 
@@ -220,7 +227,7 @@ describe('HpBlock — delta badge (Part B)', () => {
     const { rerender } = renderWithI18n(<HpBlock character={char} onUpdate={onUpdate} />, 'en')
 
     for (let i = 0; i < 3; i++) {
-      fireEvent.click(within(getCurrentHpStepper()).getByRole('button', { name: 'Decrement' }))
+      tapBtn(within(getCurrentHpStepper()).getByRole('button', { name: 'Decrement' }))
     }
 
     const badge = screen.getByTestId('hp-delta-badge')
@@ -233,7 +240,7 @@ describe('HpBlock — delta badge (Part B)', () => {
     const char = { ...BASE, hp: { current: 39, max: 45, temp: 0 } }
     renderWithI18n(<HpBlock character={char} onUpdate={onUpdate} />, 'en')
 
-    fireEvent.click(within(getCurrentHpStepper()).getByRole('button', { name: 'Decrement' }))
+    tapBtn(within(getCurrentHpStepper()).getByRole('button', { name: 'Decrement' }))
     expect(screen.getByTestId('hp-delta-badge')).toBeDefined()
 
     act(() => { vi.advanceTimersByTime(2000) })
@@ -245,8 +252,8 @@ describe('HpBlock — delta badge (Part B)', () => {
     const char = { ...BASE, hp: { current: 39, max: 45, temp: 0 } }
     renderWithI18n(<HpBlock character={char} onUpdate={onUpdate} />, 'en')
 
-    fireEvent.click(within(getCurrentHpStepper()).getByRole('button', { name: 'Increment' }))
-    fireEvent.click(within(getCurrentHpStepper()).getByRole('button', { name: 'Decrement' }))
+    tapBtn(within(getCurrentHpStepper()).getByRole('button', { name: 'Increment' }))
+    tapBtn(within(getCurrentHpStepper()).getByRole('button', { name: 'Decrement' }))
 
     expect(screen.queryByTestId('hp-delta-badge')).toBeNull()
   })
@@ -256,7 +263,7 @@ describe('HpBlock — delta badge (Part B)', () => {
     const char = { ...BASE, hp: { current: 45, max: 45, temp: 0 } }
     renderWithI18n(<HpBlock character={char} onUpdate={onUpdate} />, 'en')
 
-    fireEvent.click(within(getCurrentHpStepper()).getByRole('button', { name: 'Increment' }))
+    tapBtn(within(getCurrentHpStepper()).getByRole('button', { name: 'Increment' }))
     expect(screen.queryByTestId('hp-delta-badge')).toBeNull()
   })
 
@@ -265,7 +272,7 @@ describe('HpBlock — delta badge (Part B)', () => {
     const char = { ...BASE, hp: { current: 39, max: 45, temp: 0 } }
     renderWithI18n(<HpBlock character={char} onUpdate={onUpdate} />, 'en')
 
-    fireEvent.click(within(getCurrentHpStepper()).getByRole('button', { name: 'Decrement' }))
+    tapBtn(within(getCurrentHpStepper()).getByRole('button', { name: 'Decrement' }))
     const badge = screen.getByTestId('hp-delta-badge')
     expect(badge.textContent?.startsWith('\u2212')).toBe(true)
   })
@@ -275,7 +282,7 @@ describe('HpBlock — delta badge (Part B)', () => {
     const char = { ...BASE, hp: { current: 39, max: 45, temp: 0 } }
     renderWithI18n(<HpBlock character={char} onUpdate={onUpdate} />, 'en')
 
-    fireEvent.click(within(getCurrentHpStepper()).getByRole('button', { name: 'Increment' }))
+    tapBtn(within(getCurrentHpStepper()).getByRole('button', { name: 'Increment' }))
     const badge = screen.getByTestId('hp-delta-badge')
     expect(badge.textContent).toBe('+1')
   })
@@ -285,7 +292,7 @@ describe('HpBlock — delta badge (Part B)', () => {
     const char = { ...BASE, hp: { current: 39, max: 45, temp: 0 } }
     renderWithI18n(<HpBlock character={char} onUpdate={onUpdate} />, 'en')
 
-    fireEvent.click(within(getCurrentHpStepper()).getByRole('button', { name: 'Decrement' }))
+    tapBtn(within(getCurrentHpStepper()).getByRole('button', { name: 'Decrement' }))
     expect(screen.getByTestId('hp-delta-badge').getAttribute('aria-live')).toBe('polite')
   })
 })

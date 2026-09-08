@@ -406,7 +406,8 @@ describe('CampaignInitiativePanel — HP controls', () => {
       <CampaignInitiativePanel isMaster tracker={tracker} linkedChars={[]} onUpdate={onUpdate} />,
       'en',
     )
-    fireEvent.click(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerDown(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerUp(screen.getByTestId('hp-minus-c1'))
     expect(onUpdate).toHaveBeenCalledOnce()
     const updated = onUpdate.mock.calls[0]![0] as InitiativeTracker
     expect(updated.combatants[0]!.hp).toEqual({ current: 7, max: 15 })
@@ -421,7 +422,8 @@ describe('CampaignInitiativePanel — HP controls', () => {
       <CampaignInitiativePanel isMaster tracker={tracker} linkedChars={[]} onUpdate={onUpdate} />,
       'en',
     )
-    fireEvent.click(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerDown(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerUp(screen.getByTestId('hp-minus-c1'))
     const updated = onUpdate.mock.calls[0]![0] as InitiativeTracker
     expect(updated.combatants[0]!.hp!.current).toBe(0)
   })
@@ -435,7 +437,8 @@ describe('CampaignInitiativePanel — HP controls', () => {
       <CampaignInitiativePanel isMaster tracker={tracker} linkedChars={[]} onUpdate={onUpdate} />,
       'en',
     )
-    fireEvent.click(screen.getByTestId('hp-plus-c1'))
+    fireEvent.pointerDown(screen.getByTestId('hp-plus-c1'))
+    fireEvent.pointerUp(screen.getByTestId('hp-plus-c1'))
     const updated = onUpdate.mock.calls[0]![0] as InitiativeTracker
     expect(updated.combatants[0]!.hp).toEqual({ current: 9, max: 15 })
   })
@@ -449,7 +452,8 @@ describe('CampaignInitiativePanel — HP controls', () => {
       <CampaignInitiativePanel isMaster tracker={tracker} linkedChars={[]} onUpdate={onUpdate} />,
       'en',
     )
-    fireEvent.click(screen.getByTestId('hp-plus-c1'))
+    fireEvent.pointerDown(screen.getByTestId('hp-plus-c1'))
+    fireEvent.pointerUp(screen.getByTestId('hp-plus-c1'))
     const updated = onUpdate.mock.calls[0]![0] as InitiativeTracker
     expect(updated.combatants[0]!.hp!.current).toBe(15)
   })
@@ -1250,7 +1254,8 @@ describe('CampaignInitiativePanel — HP delta badge', () => {
       <CampaignInitiativePanel isMaster tracker={makeTracker({ combatants: [combatantWithHp] })} linkedChars={[]} onUpdate={noOp} />,
       'en',
     )
-    fireEvent.click(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerDown(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerUp(screen.getByTestId('hp-minus-c1'))
     const badge = screen.getByTestId('combatant-hp-delta-c1')
     expect(badge).toBeDefined()
     expect(badge.textContent).toContain('1')
@@ -1262,7 +1267,8 @@ describe('CampaignInitiativePanel — HP delta badge', () => {
       <CampaignInitiativePanel isMaster tracker={makeTracker({ combatants: [combatantWithHp] })} linkedChars={[]} onUpdate={noOp} />,
       'en',
     )
-    fireEvent.click(screen.getByTestId('hp-plus-c1'))
+    fireEvent.pointerDown(screen.getByTestId('hp-plus-c1'))
+    fireEvent.pointerUp(screen.getByTestId('hp-plus-c1'))
     const badge = screen.getByTestId('combatant-hp-delta-c1')
     expect(badge).toBeDefined()
     expect(badge.textContent).toBe('+1')
@@ -1274,9 +1280,12 @@ describe('CampaignInitiativePanel — HP delta badge', () => {
       <CampaignInitiativePanel isMaster tracker={makeTracker({ combatants: [combatantWithHp] })} linkedChars={[]} onUpdate={noOp} />,
       'en',
     )
-    fireEvent.click(screen.getByTestId('hp-minus-c1'))
-    fireEvent.click(screen.getByTestId('hp-minus-c1'))
-    fireEvent.click(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerDown(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerUp(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerDown(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerUp(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerDown(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerUp(screen.getByTestId('hp-minus-c1'))
     const badge = screen.getByTestId('combatant-hp-delta-c1')
     expect(badge.textContent).toContain('3')
   })
@@ -1286,7 +1295,8 @@ describe('CampaignInitiativePanel — HP delta badge', () => {
       <CampaignInitiativePanel isMaster tracker={makeTracker({ combatants: [combatantWithHp] })} linkedChars={[]} onUpdate={noOp} />,
       'en',
     )
-    fireEvent.click(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerDown(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerUp(screen.getByTestId('hp-minus-c1'))
     expect(screen.getByTestId('combatant-hp-delta-c1').getAttribute('aria-live')).toBe('polite')
   })
 
@@ -1296,7 +1306,8 @@ describe('CampaignInitiativePanel — HP delta badge', () => {
       <CampaignInitiativePanel isMaster tracker={makeTracker({ combatants: [combatantWithHp] })} linkedChars={[]} onUpdate={noOp} />,
       'en',
     )
-    fireEvent.click(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerDown(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerUp(screen.getByTestId('hp-minus-c1'))
     expect(screen.getByTestId('combatant-hp-delta-c1')).toBeDefined()
     await act(async () => { vi.advanceTimersByTime(2001) })
     expect(screen.queryByTestId('combatant-hp-delta-c1')).toBeNull()
@@ -1313,8 +1324,10 @@ describe('CampaignInitiativePanel — HP delta badge', () => {
       />,
       'en',
     )
-    fireEvent.click(screen.getByTestId('hp-minus-c1'))
-    fireEvent.click(screen.getByTestId('hp-plus-c2'))
+    fireEvent.pointerDown(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerUp(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerDown(screen.getByTestId('hp-plus-c2'))
+    fireEvent.pointerUp(screen.getByTestId('hp-plus-c2'))
     expect(screen.getByTestId('combatant-hp-delta-c1').textContent).toContain('1')
     expect(screen.getByTestId('combatant-hp-delta-c2').textContent).toBe('+1')
   })
