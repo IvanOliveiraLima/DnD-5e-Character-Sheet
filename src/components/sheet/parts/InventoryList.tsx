@@ -353,7 +353,6 @@ function ItemCard({ item, readOnly, expanded, onToggle, onUpdate, onRemove, lock
             data-testid={`item-name-${item.id}`}
             style={{ ...SEAMLESS, flex: '0 1 auto', maxWidth: 'min(60%, 320px)', minWidth: 120 }}
             className="hover:border-[#2A2537] focus:border-[#2A2537] outline-none transition-colors"
-            autoFocus={!locked}
             readOnly={locked}
           />
         ) : (

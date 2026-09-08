@@ -105,7 +105,6 @@ function FeatureCard({ feature, datalistId, onUpdate, onRemove, locked, readOnly
             onFocus={focusBorder}
             onBlur={blurBorder}
             readOnly={locked}
-            autoFocus={!locked}
           />
         ) : (
           <span
