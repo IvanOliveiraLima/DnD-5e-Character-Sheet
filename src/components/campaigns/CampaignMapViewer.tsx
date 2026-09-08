@@ -2533,7 +2533,7 @@ export function CampaignMapViewer({ map, isMaster = false, expanded = false, onG
           data-testid="viewer-initiative-panel"
           style={{
             position: 'absolute', top: 48, left: 56, zIndex: 997,
-            width: 300, maxHeight: '80%', overflowY: 'auto',
+            width: 360, maxHeight: '80%', overflowY: 'auto',
           }}
         >
           <CampaignInitiativePanel
