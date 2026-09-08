@@ -79,7 +79,7 @@ export function NumberField({
   // width-related properties. The input must use flex: 1 1 0 to consume
   // remaining space after the buttons, not width: 100% which would size it
   // relative to the flex container and cause overlap on narrow viewports.
-  const { style: passedStyle, ...inputRest } = rest
+  const { style: passedStyle, className: passedClassName, ...inputRest } = rest as { style?: React.CSSProperties; className?: string } & typeof rest
 
   const inputStyle: React.CSSProperties | undefined = showSteppers
     ? { ...passedStyle, width: 'auto', flex: '1 1 0', minWidth: 48 }
@@ -96,6 +96,7 @@ export function NumberField({
       onBlur={handleBlur}
       readOnly={readOnly}
       style={inputStyle}
+      className={['no-spinner', passedClassName].filter(Boolean).join(' ')}
       {...inputRest}
     />
   )

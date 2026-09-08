@@ -403,6 +403,7 @@ export function CampaignInitiativePanel({ isMaster, tracker, linkedChars, onUpda
                       </button>
                       <input
                         type="number"
+                        className="no-spinner"
                         data-testid={`combatant-hp-${c.id}`}
                         aria-label={t('aria.combatant_hp')}
                         value={c.hp.current}
@@ -483,6 +484,7 @@ export function CampaignInitiativePanel({ isMaster, tracker, linkedChars, onUpda
                 {isMaster ? (
                   <input
                     type="number"
+                    className="no-spinner"
                     data-testid={`initiative-value-${c.id}`}
                     value={c.initiative}
                     onChange={e => {
@@ -658,6 +660,7 @@ export function CampaignInitiativePanel({ isMaster, tracker, linkedChars, onUpda
               <span data-testid="monster-init-label" style={fieldLabel}>{t('initiative.value')}</span>
               <input
                 type="number"
+                className="no-spinner"
                 data-testid="monster-init-input"
                 placeholder={t('initiative.value')}
                 value={monsterInit}
@@ -670,6 +673,7 @@ export function CampaignInitiativePanel({ isMaster, tracker, linkedChars, onUpda
               <span data-testid="monster-hp-label" style={fieldLabel}>{t('initiative.hp')}</span>
               <input
                 type="number"
+                className="no-spinner"
                 data-testid="monster-hp-input"
                 placeholder={t('initiative.hp')}
                 value={monsterHp}

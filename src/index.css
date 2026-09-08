@@ -105,3 +105,13 @@ input, textarea, select, button { font-family: inherit; }
 .status-badge-neutral .status-badge-dot {
   background-color: #7A7788;
 }
+
+.no-spinner::-webkit-inner-spin-button,
+.no-spinner::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.no-spinner {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
