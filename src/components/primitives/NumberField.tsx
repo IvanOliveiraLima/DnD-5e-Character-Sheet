@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type React from 'react'
 import { useTranslation } from '@/i18n'
+import { useHoldRepeat } from '@/hooks/useHoldRepeat'
 
 interface NumberFieldProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type' | 'value' | 'onChange' | 'onBlur'> {
@@ -9,6 +10,7 @@ interface NumberFieldProps
   max?: number
   onChange: (n: number) => void
   onStep?: (dir: -1 | 1) => void
+  onHoldStep?: (dir: -1 | 1) => void
   showSteppers?: boolean
   readOnly?: boolean
 }
@@ -30,6 +32,7 @@ export function NumberField({
   max = 999,
   onChange,
   onStep,
+  onHoldStep,
   showSteppers = false,
   readOnly,
   ...rest
@@ -73,13 +76,17 @@ export function NumberField({
     if (next !== value) onChange(next)
   }
 
+  // Always call the hooks (rules of hooks); handlers only attached when onHoldStep present
+  const decHoldHandlers = useHoldRepeat(decrement, () => { onHoldStep?.(-1) })
+  const incHoldHandlers = useHoldRepeat(increment, () => { onHoldStep?.(1) })
+
   const fieldDisabled = rest.disabled === true || readOnly === true
 
   // When steppers are active, separate the passed style so we can override
   // width-related properties. The input must use flex: 1 1 0 to consume
   // remaining space after the buttons, not width: 100% which would size it
   // relative to the flex container and cause overlap on narrow viewports.
-  const { style: passedStyle, ...inputRest } = rest
+  const { style: passedStyle, className: passedClassName, ...inputRest } = rest as { style?: React.CSSProperties; className?: string } & typeof rest
 
   const inputStyle: React.CSSProperties | undefined = showSteppers
     ? { ...passedStyle, width: 'auto', flex: '1 1 0', minWidth: 48 }
@@ -96,6 +103,7 @@ export function NumberField({
       onBlur={handleBlur}
       readOnly={readOnly}
       style={inputStyle}
+      className={['no-spinner', passedClassName].filter(Boolean).join(' ')}
       {...inputRest}
     />
   )
@@ -141,10 +149,13 @@ export function NumberField({
     >
       <button
         type="button"
-        onClick={decrement}
         disabled={decrementDisabled}
         aria-label={t('aria.decrement_value')}
         style={btnStyle(decrementDisabled)}
+        {...(onHoldStep
+          ? (decrementDisabled ? {} : decHoldHandlers)
+          : { onClick: decrement }
+        )}
       >
         −
       </button>
@@ -153,10 +164,13 @@ export function NumberField({
 
       <button
         type="button"
-        onClick={increment}
         disabled={incrementDisabled}
         aria-label={t('aria.increment_value')}
         style={btnStyle(incrementDisabled)}
+        {...(onHoldStep
+          ? (incrementDisabled ? {} : incHoldHandlers)
+          : { onClick: increment }
+        )}
       >
         +
       </button>

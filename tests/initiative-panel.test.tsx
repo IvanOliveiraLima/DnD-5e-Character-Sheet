@@ -9,8 +9,8 @@
  *  - Active combatant highlighted (gold ▶ indicator)
  *  - PT / EN titles
  */
-import { describe, it, expect, vi } from 'vitest'
-import { screen, fireEvent } from '@testing-library/react'
+import { describe, it, expect, vi, afterEach } from 'vitest'
+import { screen, fireEvent, act } from '@testing-library/react'
 import { renderWithI18n } from './helpers/render'
 import { CampaignInitiativePanel } from '@/components/campaigns/CampaignInitiativePanel'
 import type { InitiativeTracker } from '@/domain/initiative'
@@ -406,7 +406,8 @@ describe('CampaignInitiativePanel — HP controls', () => {
       <CampaignInitiativePanel isMaster tracker={tracker} linkedChars={[]} onUpdate={onUpdate} />,
       'en',
     )
-    fireEvent.click(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerDown(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerUp(screen.getByTestId('hp-minus-c1'))
     expect(onUpdate).toHaveBeenCalledOnce()
     const updated = onUpdate.mock.calls[0]![0] as InitiativeTracker
     expect(updated.combatants[0]!.hp).toEqual({ current: 7, max: 15 })
@@ -421,7 +422,8 @@ describe('CampaignInitiativePanel — HP controls', () => {
       <CampaignInitiativePanel isMaster tracker={tracker} linkedChars={[]} onUpdate={onUpdate} />,
       'en',
     )
-    fireEvent.click(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerDown(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerUp(screen.getByTestId('hp-minus-c1'))
     const updated = onUpdate.mock.calls[0]![0] as InitiativeTracker
     expect(updated.combatants[0]!.hp!.current).toBe(0)
   })
@@ -435,7 +437,8 @@ describe('CampaignInitiativePanel — HP controls', () => {
       <CampaignInitiativePanel isMaster tracker={tracker} linkedChars={[]} onUpdate={onUpdate} />,
       'en',
     )
-    fireEvent.click(screen.getByTestId('hp-plus-c1'))
+    fireEvent.pointerDown(screen.getByTestId('hp-plus-c1'))
+    fireEvent.pointerUp(screen.getByTestId('hp-plus-c1'))
     const updated = onUpdate.mock.calls[0]![0] as InitiativeTracker
     expect(updated.combatants[0]!.hp).toEqual({ current: 9, max: 15 })
   })
@@ -449,7 +452,8 @@ describe('CampaignInitiativePanel — HP controls', () => {
       <CampaignInitiativePanel isMaster tracker={tracker} linkedChars={[]} onUpdate={onUpdate} />,
       'en',
     )
-    fireEvent.click(screen.getByTestId('hp-plus-c1'))
+    fireEvent.pointerDown(screen.getByTestId('hp-plus-c1'))
+    fireEvent.pointerUp(screen.getByTestId('hp-plus-c1'))
     const updated = onUpdate.mock.calls[0]![0] as InitiativeTracker
     expect(updated.combatants[0]!.hp!.current).toBe(15)
   })
@@ -1227,6 +1231,105 @@ describe('CampaignInitiativePanel — token link icon', () => {
       'en',
     )
     expect(screen.queryByTestId('combatant-token-c-bare')).toBeNull()
+  })
+})
+
+// ── HP delta badge ────────────────────────────────────────────────────────────
+
+describe('CampaignInitiativePanel — HP delta badge', () => {
+  afterEach(() => { vi.useRealTimers() })
+
+  const combatantWithHp = { id: 'c1', name: 'Goblin', initiative: 5, hp: { current: 8, max: 15 } }
+
+  it('delta badge absent before any button click', () => {
+    renderWithI18n(
+      <CampaignInitiativePanel isMaster tracker={makeTracker({ combatants: [combatantWithHp] })} linkedChars={[]} onUpdate={noOp} />,
+      'en',
+    )
+    expect(screen.queryByTestId('combatant-hp-delta-c1')).toBeNull()
+  })
+
+  it('clicking − shows delta badge with −1', () => {
+    renderWithI18n(
+      <CampaignInitiativePanel isMaster tracker={makeTracker({ combatants: [combatantWithHp] })} linkedChars={[]} onUpdate={noOp} />,
+      'en',
+    )
+    fireEvent.pointerDown(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerUp(screen.getByTestId('hp-minus-c1'))
+    const badge = screen.getByTestId('combatant-hp-delta-c1')
+    expect(badge).toBeDefined()
+    expect(badge.textContent).toContain('1')
+    expect(badge.style.color).toBe('rgb(226, 75, 74)')
+  })
+
+  it('clicking + shows delta badge with +1', () => {
+    renderWithI18n(
+      <CampaignInitiativePanel isMaster tracker={makeTracker({ combatants: [combatantWithHp] })} linkedChars={[]} onUpdate={noOp} />,
+      'en',
+    )
+    fireEvent.pointerDown(screen.getByTestId('hp-plus-c1'))
+    fireEvent.pointerUp(screen.getByTestId('hp-plus-c1'))
+    const badge = screen.getByTestId('combatant-hp-delta-c1')
+    expect(badge).toBeDefined()
+    expect(badge.textContent).toBe('+1')
+    expect(badge.style.color).toBe('rgb(93, 202, 165)')
+  })
+
+  it('accumulates delta across successive minus clicks', () => {
+    renderWithI18n(
+      <CampaignInitiativePanel isMaster tracker={makeTracker({ combatants: [combatantWithHp] })} linkedChars={[]} onUpdate={noOp} />,
+      'en',
+    )
+    fireEvent.pointerDown(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerUp(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerDown(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerUp(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerDown(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerUp(screen.getByTestId('hp-minus-c1'))
+    const badge = screen.getByTestId('combatant-hp-delta-c1')
+    expect(badge.textContent).toContain('3')
+  })
+
+  it('delta badge has aria-live="polite"', () => {
+    renderWithI18n(
+      <CampaignInitiativePanel isMaster tracker={makeTracker({ combatants: [combatantWithHp] })} linkedChars={[]} onUpdate={noOp} />,
+      'en',
+    )
+    fireEvent.pointerDown(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerUp(screen.getByTestId('hp-minus-c1'))
+    expect(screen.getByTestId('combatant-hp-delta-c1').getAttribute('aria-live')).toBe('polite')
+  })
+
+  it('delta badge disappears after 2s timeout', async () => {
+    vi.useFakeTimers()
+    renderWithI18n(
+      <CampaignInitiativePanel isMaster tracker={makeTracker({ combatants: [combatantWithHp] })} linkedChars={[]} onUpdate={noOp} />,
+      'en',
+    )
+    fireEvent.pointerDown(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerUp(screen.getByTestId('hp-minus-c1'))
+    expect(screen.getByTestId('combatant-hp-delta-c1')).toBeDefined()
+    await act(async () => { vi.advanceTimersByTime(2001) })
+    expect(screen.queryByTestId('combatant-hp-delta-c1')).toBeNull()
+  })
+
+  it('each combatant gets its own independent delta', () => {
+    const c2 = { id: 'c2', name: 'Orc', initiative: 3, hp: { current: 20, max: 30 } }
+    renderWithI18n(
+      <CampaignInitiativePanel
+        isMaster
+        tracker={makeTracker({ combatants: [combatantWithHp, c2] })}
+        linkedChars={[]}
+        onUpdate={noOp}
+      />,
+      'en',
+    )
+    fireEvent.pointerDown(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerUp(screen.getByTestId('hp-minus-c1'))
+    fireEvent.pointerDown(screen.getByTestId('hp-plus-c2'))
+    fireEvent.pointerUp(screen.getByTestId('hp-plus-c2'))
+    expect(screen.getByTestId('combatant-hp-delta-c1').textContent).toContain('1')
+    expect(screen.getByTestId('combatant-hp-delta-c2').textContent).toBe('+1')
   })
 })
 
